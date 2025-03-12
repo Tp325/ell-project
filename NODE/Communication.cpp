@@ -19,8 +19,8 @@ void Communication::begin() {
     Serial.println(state);
     while (true) { vTaskDelay(100 / portTICK_PERIOD_MS); }
   }
-  radio.setPacketReceivedAction(setReceiveFlag);
   state = radio.startReceive();
+  radio.setPacketReceivedAction(setReceiveFlag);
 }
 void Communication::receiveFromSink() {
   if (receiveFlag) {
@@ -37,15 +37,17 @@ void Communication::receiveFromSink() {
 void Communication::sendToSink() {
   while (!isEmpty(buffDataToSink)) {
     buffermsgToSink = dequeue(buffDataToSink);
-    state = radio.transmit(buffermsgToSink);
-    if (state == RADIOLIB_ERR_NONE) {
+    Serial.println(buffermsgToSink);
+    transmissionState = radio.transmit(buffermsgToSink);
+    if (transmissionState == RADIOLIB_ERR_NONE)
       Serial.println("transmission finished!");
-    } else {
+    else {
       Serial.print("failed, code ");
-      Serial.println(state);
+      Serial.println(transmissionState);
     }
     radio.finishTransmit();
-    vTaskDelay(250 / portTICK_PERIOD_MS);
+    state = radio.startReceive();
+    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }
 void Communication::analysis_send_DataToSink() {
@@ -79,9 +81,10 @@ void Communication::analysis_send_DataToSink() {
     pool[IDOfPool].midValue = doc["md"].as<float>();
     pool[IDOfPool].minValue = doc["mn"].as<float>();
     serializeJson(doc1, msgToSink);
-    // if (!isFull(buffDataToSink)) {
-    //   enqueueData(buffDataToSink, msgToSink.c_str());
-    // }
+    Serial.println(msgToSink);
+    if (!isFull(buffDataToSink)) {
+      enqueueData(buffDataToSink, msgToSink.c_str());
+    }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }

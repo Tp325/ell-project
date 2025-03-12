@@ -6,9 +6,11 @@
 #include <driver/uart.h>
 #include <ArduinoJson.h>
 #include <ArduinoJson.hpp>
+#include <PubSubClient.h>
+#include <WiFiManager.h>
 extern DynamicJsonDocument doc;
 extern SX1278 radio;
-extern volatile bool receiveFlag ;
+extern volatile bool receiveFlag;
 extern void setReceiveFlag();
 class Communication {
 private:
@@ -18,6 +20,11 @@ private:
 public:
   Communication();
   void begin();
+  void connectToWifi();
+  void connectToMQTT();
+  void sendtoMQTT();
+  void receiveFromMQTT();
+  void connectLora();
   void sendToNode();
   void sendToDisplay();
   void receiveFromNode();

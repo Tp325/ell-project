@@ -7,10 +7,17 @@ void setReceiveFlag() {
 }
 Communication::Communication() {
 }
+
 void Communication::begin() {
   Serial2.begin(9600, SERIAL_8N1, 16, 17);
   // Cài đặt driver UART2 với buffer RX 1024 byte và TX 1024 byte
   uart_driver_install(UART_NUM_2, 1024, 1024, 0, NULL, 0);
+}
+void connectToWifi();
+void connectToMQTT();
+void sendtoMQTT();
+void receiveFromMQTT();
+void Communication::connectLora() {
   Serial.println("[SX1278] Initializing ... ");
   state = radio.begin(carrierFrequency, bandwidth, spreadingFactor, codingRate, syncWord, outputPower, preambleLength, amplifierGain);
   // state = radio.begin();
@@ -23,6 +30,7 @@ void Communication::begin() {
     radio.setPacketReceivedAction(setReceiveFlag);
   }
 }
+
 void Communication::sendToNode() {
   while (!isEmpty(buffDataFromDisplay)) {
     msgSendToNode = dequeue(buffDataFromDisplay);
