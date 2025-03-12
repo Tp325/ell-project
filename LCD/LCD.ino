@@ -38,16 +38,6 @@ void vtaskSendToSink(void *pvParameters) {
     if (isValStatusButtonPressed == 1 || isSettingValChange == 2) {
       communication.sendToSink();
       vTaskDelay(100 / portTICK_PERIOD_MS);
-
-
-      if (pool[lastPage != 0 ? lastPage : currentPage].inStatus == 2 || pool[lastPage != 0 ? lastPage : currentPage].inStatus == 3)
-        pool[lastPage != 0 ? lastPage : currentPage].inStatus -= 2;
-      if (pool[lastPage != 0 ? lastPage : currentPage].outStatus == 2 || pool[lastPage != 0 ? lastPage : currentPage].outStatus == 3)
-        pool[lastPage != 0 ? lastPage : currentPage].outStatus -= 2;
-      if (pool[lastPage != 0 ? lastPage : currentPage].autoStatus == 2 || pool[lastPage != 0 ? lastPage : currentPage].autoStatus == 3)
-        pool[lastPage != 0 ? lastPage : currentPage].autoStatus -= 2;
-
-
       isValStatusButtonPressed = 0;
       isSettingValChange = 0;
     }

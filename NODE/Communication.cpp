@@ -23,7 +23,6 @@ void Communication::begin() {
   state = radio.startReceive();
 }
 void Communication::receiveFromSink() {
-  state = radio.startReceive();
   if (receiveFlag) {
     receiveFlag = false;
     state = radio.readData(msgFromSink);
@@ -80,9 +79,9 @@ void Communication::analysis_send_DataToSink() {
     pool[IDOfPool].midValue = doc["md"].as<float>();
     pool[IDOfPool].minValue = doc["mn"].as<float>();
     serializeJson(doc1, msgToSink);
-    if (!isFull(buffDataToSink)) {
-      enqueueData(buffDataToSink, msgToSink.c_str());
-    }
+    // if (!isFull(buffDataToSink)) {
+    //   enqueueData(buffDataToSink, msgToSink.c_str());
+    // }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }

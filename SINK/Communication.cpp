@@ -35,14 +35,14 @@ void Communication::sendToNode() {
     }
     radio.finishTransmit();
     state = radio.startReceive();
-    vTaskDelay(50 / portTICK_PERIOD_MS);
+    vTaskDelay(200 / portTICK_PERIOD_MS);
   }
 }
 void Communication::sendToDisplay() {
   while (!isEmpty(buffDataFromNode)) {
     msgSendToDisplay = dequeue(buffDataFromNode);
     Serial2.print(msgSendToDisplay);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }
 void Communication::receiveFromNode() {
