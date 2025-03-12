@@ -14,7 +14,7 @@ void loop() {
 void vtaskSend(void *pvParameters) {
   while (1) {
     communication.sendToNode();
-    communication.sendToDisplay();
+    // communication.sendToDisplay();
     vTaskDelay(20 / portTICK_PERIOD_MS);
   }
 }

@@ -11,7 +11,6 @@ extern void setReceiveFlag();
 class Communication {
 private:
   int state;
-  int transmissionState = RADIOLIB_ERR_NONE;
 public:
   Communication();
   void begin();
