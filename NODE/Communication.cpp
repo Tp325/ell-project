@@ -46,9 +46,9 @@ void Communication::sendToSink() {
       Serial.println(transmissionState);
     }
     radio.finishTransmit();
-    state = radio.startReceive();
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
+  state = radio.startReceive();
 }
 void Communication::analysis_send_DataToSink() {
   while (!isEmpty(buffDataFromSink)) {

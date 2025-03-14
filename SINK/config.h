@@ -78,5 +78,4 @@ extern CircularQueue *buffDataFromNode;
 extern CircularQueue *buffDataFromMqtt;
 extern CircularQueue *buffDataToMqtt;
 
-
 #endif

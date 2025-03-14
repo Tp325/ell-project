@@ -14,7 +14,7 @@ void setup() {
   xTaskCreate(vTaskReceive, "TaskReceive", 10000, NULL, 5, NULL);
   xTaskCreate(vTaskAnalizeData, "TaskAnalizeData", 10000, NULL, 5, NULL);
   xTaskCreate(vTaskExecution, "TaskExecution", 10000, NULL, 5, NULL);
-  // xTaskCreate(vTaskSend, "TaskSend", 20000, NULL, 5, NULL);
+  xTaskCreate(vTaskSend, "TaskSend", 20000, NULL, 5, NULL);
 }
 void loop() {
   vTaskDelete(NULL);
@@ -25,12 +25,12 @@ void vTaskReceive(void *pvParameters) {
     vTaskDelay(20 / portTICK_PERIOD_MS);
   }
 }
-// void vTaskSend(void *pvParameters) {
-//   while (1) {
-//     communication.sendToSink();
-//     vTaskDelay(100 / portTICK_PERIOD_MS);
-//   }
-// }
+void vTaskSend(void *pvParameters) {
+  while (1) {
+    communication.sendToSink();
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+  }
+}
 void vTaskAnalizeData(void *pvParameters) {
   while (1) {
     communication.analysis_send_DataToSink();

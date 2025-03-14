@@ -48,9 +48,9 @@ void Communication::sendToNode() {
       Serial.println(transmissionState);
     }
     radio.finishTransmit();
-    state = radio.startReceive();
-    vTaskDelay(200 / portTICK_PERIOD_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
+  state = radio.startReceive();
 }
 void Communication::sendToDisplay() {
   while (!isEmpty(buffDataFromNode)) {
@@ -121,19 +121,13 @@ void Communication::sendToMQTT(String topic, String msg) {
 }
 
 void Communication::mqttCallback(char *topic, byte *payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-
-  if (strcmp(topic, mqttTopicSubscribe.c_str()) == 0) {
-    msgFromMQTT = "";
-    for (unsigned int i = 0; i < length; i++) {
-      msgFromMQTT += (char)payload[i];
-    }
-    Serial.println(msgFromMQTT);
-    if (!isFull(buffDataFromMqtt)) {
-      enqueueData(buffDataFromMqtt, msgFromMQTT.c_str());
-    }
+  msgFromMQTT = "";
+  for (unsigned int i = 0; i < length; i++) {
+    msgFromMQTT += (char)payload[i];
+  }
+  Serial.println(msgFromMQTT);
+  if (!isFull(buffDataFromMqtt)) {
+    enqueueData(buffDataFromMqtt, msgFromMQTT.c_str());
   }
 }
 
@@ -147,7 +141,7 @@ void Communication::mqttReconnect(String topicSubscribe) {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
-      delay(5000);
+      vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
   }
 }
@@ -157,29 +151,9 @@ void Communication::processMqtt() {
 void Communication::analizeDataFromMQTT() {
   while (!isEmpty(buffDataFromMqtt)) {
     buffermsgFromMQTT = dequeue(buffDataFromMqtt);
-
-    // Deserialize JSON from MQTT message
-    DeserializationError error = deserializeJson(doc, buffermsgFromMQTT);
-    if (error) {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(error.f_str());
-      continue;  // Skip to next message if parsing failed
+    if (!isFull(buffDataFromDisplay)) {
+      enqueueData(buffDataFromDisplay, buffermsgFromMQTT.c_str());
     }
-
-    String msgLora = "";
-    serializeJson(doc, msgLora);
-
-    if (msgLora.length() > MAX_PACKET_SIZE) {
-      Serial.println("msgLora too long: ");
-      Serial.println(msgLora);
-    } else {
-      if (!isFull(buffDataFromDisplay)) {
-        enqueueData(buffDataFromDisplay, msgLora.c_str());
-        Serial.println("send to Node: ");
-      }
-    }
-
-    doc.clear();  // Clear for next message
     vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }

@@ -48,4 +48,3 @@ CircularQueue *buffDataFromNode = createQueue(30);
 CircularQueue *buffDataFromMqtt = createQueue(30);
 CircularQueue *buffDataToMqtt = createQueue(30);
 CircularQueue *buffDataToNode = createQueue(30);
-CircularQueue *buffDataToDisplay = createQueue(30);
