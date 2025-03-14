@@ -25,12 +25,12 @@ void vTaskReceive(void *pvParameters) {
     vTaskDelay(20 / portTICK_PERIOD_MS);
   }
 }
-void vTaskSend(void *pvParameters) {
-  while (1) {
-    communication.sendToSink();
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-  }
-}
+// void vTaskSend(void *pvParameters) {
+//   while (1) {
+//     communication.sendToSink();
+//     vTaskDelay(100 / portTICK_PERIOD_MS);
+//   }
+// }
 void vTaskAnalizeData(void *pvParameters) {
   while (1) {
     communication.analysis_send_DataToSink();

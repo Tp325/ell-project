@@ -2,7 +2,8 @@
 #define config_h
 #include <Arduino.h>
 #include "CircularQueue.h"
-
+#include <WiFi.h>
+#include <PubSubClient.h>
 
 //******************LOra*****************
 #define Nss 5
@@ -14,7 +15,7 @@ extern float carrierFrequency;
 extern float bandwidth;
 extern uint8_t spreadingFactor;
 extern uint8_t codingRate;
-extern uint8_t syncWord; // tùy chỉnh đường mạng
+extern uint8_t syncWord;  // tùy chỉnh đường mạng
 extern uint8_t outputPower;
 extern uint8_t preambleLength;
 extern uint8_t amplifierGain;
@@ -25,6 +26,26 @@ extern uint8_t amplifierGain;
 #define DATA_COMMAND_PIN 5  // Chân Data/Instruction trên ESP32
 #define WRITE_PIN 2         // Chân Write trên ESP32
 #define READ_PIN 0          // Chân Read trên ESP32
+
+// // MQTT
+// #define MESSAGE_FORMAT "<command>:<value>"
+// #define COMMAND_VALVE_OPEN "val_open"
+// #define COMMAND_VALVE_CLOSE "val_close"
+
+// **************** **** mqtt *************
+extern PubSubClient client;
+extern String mqttUser;            // MQTT username
+extern String mqttServer;          // MQTT broker address
+extern const int mqttPort;              // Default MQTT port
+extern String mqttPassword;        // MQTT password
+extern String mqttTopicPublish;    // desired publish topic
+extern String mqttTopicSubscribe;  // desired subscribe topic
+
+//****************** Wifi ************************
+extern WiFiClient espClient;
+extern  String ssid;      // WiFi SSID
+extern String password;  // WiFi password
+
 //*********************** quản lý hồ****************
 extern int numberOfPool;
 struct Pool {
@@ -38,16 +59,24 @@ struct Pool {
   float minValue;
 };
 extern Pool pool[10];
+extern int IDOfPool;
 
 //*************communication***********
+#define MAX_PACKET_SIZE 200
 extern String msgFromDisplay;
 extern String msgSendToDisplay;
 extern String msgSendToNode;
 extern String msgFromNode;
-
+extern String msgFromMQTT;
+extern String buffermsgFromMQTT;
+extern String msgToMQTT;
 extern bool isHavingMsg;
 
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromDisplay;
 extern CircularQueue *buffDataFromNode;
+extern CircularQueue *buffDataFromMqtt;
+extern CircularQueue *buffDataToMqtt;
+
+
 #endif
