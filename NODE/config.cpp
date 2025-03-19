@@ -3,11 +3,12 @@
 //*********************** quản lý hồ****************
 Pool pool[10];
 int numberOfPool = 0;
-void createNewPool(int poolID, int supplyPin, int drainPin, byte IDOfSensor) {
+void createNewPool(int poolID, int supplyPin, int drainPin, byte IDOfSensor, float SensorpieLenght) {
   pool[poolID].poolID = poolID;
   pool[poolID].supplyPin = supplyPin;
   pool[poolID].drainPin = drainPin;
   pool[poolID].IDOfSensor = IDOfSensor;
+  pool[poolID].SensorpieLenght = SensorpieLenght;
 }
 
 
@@ -23,8 +24,8 @@ uint8_t amplifierGain = 0;
 //*************communication***********
 String msgFromSink;
 String msgToSink;
-String buffermsgFromSink;
-String buffermsgToSink;
+String buffMsgFromSink;
+
 
 
 //***************Execution*******************

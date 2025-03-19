@@ -36,6 +36,9 @@ void Communication::receiveFromSink() {
     pool[IDOfPool].autoStatus = doc1["a"].as<uint8_t>();
     pool[IDOfPool].outStatus = doc1["o"].as<uint8_t>();
     pool[IDOfPool].inStatus = doc1["i"].as<uint8_t>();
+    if (doc1["mucn"].as<float>() != 0.0) {
+      pool[IDOfPool].mucnuoc = doc1["mucn"].as<float>();
+    }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }

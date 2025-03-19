@@ -4,9 +4,10 @@
 #include <RadioLib.h>
 #include <ArduinoJson.h>
 #include <ArduinoJson.hpp>
+#include "Sensor.h"
 extern DynamicJsonDocument doc;
 extern SX1278 radio;
-extern volatile bool receiveFlag ;
+extern volatile bool receiveFlag;
 extern void setReceiveFlag();
 class Communication {
 private:
@@ -15,8 +16,8 @@ public:
   Communication();
   void begin();
   void receiveFromSink();
-  void replyToSink();
-  void analysis_send_DataToSink();
   void sendToSink();
+  void sendToSink(String msg);
+  void analizeData();
 };
 #endif

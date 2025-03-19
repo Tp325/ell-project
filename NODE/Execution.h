@@ -2,10 +2,8 @@
 #define Excution_h
 #include "Arduino.h"
 #include "config.h"
-#include "Sensor.h"
 class Execution {
 private:
-  float bufferDistance[10];
 public:
   Execution();
   void begin();

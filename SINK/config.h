@@ -41,13 +41,16 @@ extern Pool pool[10];
 
 //*************communication***********
 extern String msgFromDisplay;
-extern String msgSendToDisplay;
-extern String msgSendToNode;
+extern String msgToDisplay;
+extern String msgToNode;
 extern String msgFromNode;
 
-extern bool isHavingMsg;
+
 
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromDisplay;
 extern CircularQueue *buffDataFromNode;
+
+
+
 #endif

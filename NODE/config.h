@@ -33,6 +33,7 @@ struct Pool {
   int poolID;
   byte IDOfSensor;
   float mucnuoc;
+  int stepOfAuto = 0;
   bool inStatus;
   bool outStatus;
   bool autoStatus;
@@ -41,16 +42,18 @@ struct Pool {
   float minValue;
   int supplyPin;
   int drainPin;
+  float SensorpieLenght;
 };
 extern Pool pool[10];
-extern void createNewPool(int poolID, int supplyPin, int drainPin,byte IDOfSensor);
+extern void createNewPool(int poolID, int supplyPin, int drainPin, byte IDOfSensor, float SensorpieLenght);
 
 
 //*************communication***********
 extern String msgFromSink;
-extern String buffermsgFromSink;
 extern String msgToSink;
-extern String buffermsgToSink;
+extern String buffMsgFromSink;
+
+
 
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromSink;
@@ -59,7 +62,6 @@ extern CircularQueue *buffDataToSink;
 
 //***************Execution*******************
 extern int IDOfPool;
-extern byte distanceSensor[10][8];
 extern int VALVE_SUPPLY_1;
 extern int VALVE_DRAIN_1;
 extern int VALVE_SUPPLY_2;

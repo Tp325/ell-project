@@ -1,6 +1,6 @@
 #include "Communication.h"
-DynamicJsonDocument doc(1024);
 SX1278 radio = new Module(Nss, Dio0, Rst, Dio1);
+DynamicJsonDocument doc;
 volatile bool receiveFlag = false;
 void setReceiveFlag() {
   receiveFlag = true;
@@ -20,49 +20,63 @@ void Communication::begin() {
     Serial.print("failed, code ");
     Serial.println(state);
     while (true) { vTaskDelay(100 / portTICK_PERIOD_MS); }
-    radio.setPacketReceivedAction(setReceiveFlag);
+  }
+  radio.setPacketReceivedAction(setReceiveFlag);
+  Serial.print(F("[SX1278] Starting to listen ... "));
+  state = radio.startReceive();
+  if (state == RADIOLIB_ERR_NONE) {
+    Serial.println(F("success!"));
+  } else {
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+    while (true) { delay(10); }
+  }
+}
+
+void Communication::receiveFromDisplay() {
+  if (Serial2.available()) {
+    msgFromDisplay = Serial2.readString();
+    if (!isFull(buffDataFromDisplay)) {
+      enqueueData(buffDataFromDisplay, msgFromDisplay.c_str());
+    }
   }
 }
 void Communication::sendToNode() {
   while (!isEmpty(buffDataFromDisplay)) {
-    msgSendToNode = dequeue(buffDataFromDisplay);
-    transmissionState = radio.transmit(msgSendToNode);
-    if (transmissionState == RADIOLIB_ERR_NONE)
+    msgToNode = dequeue(buffDataFromDisplay);
+    state = radio.transmit(msgToNode);
+    if (state == RADIOLIB_ERR_NONE) {
+      Serial.print("send: ");
+      Serial.println(msgToNode);
       Serial.println("transmission finished!");
-    else {
+    } else {
       Serial.print("failed, code ");
-      Serial.println(transmissionState);
+      Serial.println(state);
     }
-    radio.finishTransmit();
-    state = radio.startReceive();
-    vTaskDelay(200 / portTICK_PERIOD_MS);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
+    radio.startReceive();
   }
 }
-void Communication::sendToDisplay() {
-  while (!isEmpty(buffDataFromNode)) {
-    msgSendToDisplay = dequeue(buffDataFromNode);
-    Serial2.print(msgSendToDisplay);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-  }
-}
+
 void Communication::receiveFromNode() {
   if (receiveFlag) {
     receiveFlag = false;
     state = radio.readData(msgFromNode);
-    Serial.println(msgFromNode);
     if (state == RADIOLIB_ERR_NONE) {
-      if (!isFull(buffDataFromNode)) {
+      if (!isFull(buffDataFromNode) && msgFromNode != msgToNode) {
+        Serial.print("receive: ");
+        Serial.println(msgFromNode);
         enqueueData(buffDataFromNode, msgFromNode.c_str());
       }
     }
   }
 }
-void Communication::receiveFromDisplay() {
-  if (Serial2.available()) {
-    msgFromDisplay = Serial2.readString();
-    Serial.println(msgFromDisplay);
-    if (!isFull(buffDataFromDisplay)) {
-      enqueueData(buffDataFromDisplay, msgFromDisplay.c_str());
-    }
+void Communication::sendToDisplay() {
+  while (!isEmpty(buffDataFromNode)) {
+    Serial.print("send to display: ");
+    msgToDisplay = dequeue(buffDataFromNode);
+    Serial.println(msgToDisplay);
+    Serial2.print(msgToDisplay);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }

@@ -30,7 +30,7 @@ void vtaskButton(void *pvParameters) {
 void vtaskDisplay(void *pvParameters) {
   while (1) {
     screen.screenOn();
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(20 / portTICK_PERIOD_MS);
   }
 }
 void vtaskSendToSink(void *pvParameters) {

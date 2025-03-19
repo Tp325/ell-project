@@ -1,9 +1,8 @@
 #include "Sensor.h"
-RS485Sensor::RS485Sensor(int RX, int TX) {
-  mySerial = new SoftwareSerial(RX, TX);
+RS485Sensor::RS485Sensor() {
 }
 void RS485Sensor::begin() {
-  mySerial->begin(9600);
+  Serial2.begin(115200, SERIAL_8N1, RXPin, TXPin);
 }
 unsigned short RS485Sensor::calculateCRC(unsigned char *data, unsigned short length) {
   crc = 0xFFFF;
@@ -27,13 +26,13 @@ int RS485Sensor::getSensorValue(byte IDOfSensor) {
   sendData[4] = 0x00;
   sendData[5] = 0x01;
   calculateCRC(sendData, 6);
-  sendData[6] = (bufferCrc >> 8) & 0xFF;
-  sendData[7] = bufferCrc & 0xFF;
-  mySerial->write(sendData, 8);
+  sendData[6] = crc & 0xFF;
+  sendData[7] = (crc >> 8) & 0xFF;
+  Serial2.write(sendData, 8);
   vTaskDelay(200 / portTICK_PERIOD_MS);
-  if (mySerial->available()) {
-    mySerial->readBytes(receiveData, 8 - 1);
-    return receiveData[3] << 8 | receiveData[3 + 1];
+  if (Serial2.available() >= 7) {
+    Serial2.readBytes(receiveData, 7);
+    return receiveData[3] << 8 | receiveData[4];
   } else {
     return 0;
   }

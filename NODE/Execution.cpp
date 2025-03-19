@@ -26,5 +26,34 @@ void Execution::xsupplyIn(int poolID) {
   digitalWrite(pool[poolID].supplyPin, LOW);
 }
 void Execution::autoRun(int poolID) {
-  // bufferDistance[poolID] = getDistance(distanceSensor[1]);
+  if (pool[poolID].maxValue > pool[poolID].midValue && pool[poolID].midValue > pool[poolID].minValue) {
+    if (pool[poolID].stepOfAuto == 0) {
+      if (pool[poolID].mucnuoc == pool[poolID].minValue)
+        pool[poolID].stepOfAuto++;
+      else
+        digitalWrite(pool[poolID].drainPin, HIGH);
+    } else if (pool[poolID].stepOfAuto == 1) {
+      if (pool[poolID].mucnuoc == pool[poolID].maxValue)
+        pool[poolID].stepOfAuto++;
+      else {
+        digitalWrite(pool[poolID].drainPin, LOW);
+        digitalWrite(pool[poolID].supplyPin, HIGH);
+      }
+    } else if (pool[poolID].stepOfAuto == 2) {
+      if (pool[poolID].mucnuoc == pool[poolID].midValue) {
+        pool[poolID].stepOfAuto++;
+      } else {
+        digitalWrite(pool[poolID].drainPin, HIGH);
+        digitalWrite(pool[poolID].supplyPin, LOW);
+      }
+    } else if (pool[poolID].stepOfAuto == 3) {
+      if (pool[poolID].mucnuoc == pool[poolID].maxValue) {
+        pool[poolID].stepOfAuto = 0;
+        pool[poolID].autoStatus = 0;
+      } else {
+        digitalWrite(pool[poolID].drainPin, LOW);
+        digitalWrite(pool[poolID].supplyPin, HIGH);
+      }
+    } else pool[poolID].autoStatus = 0;
+  } else pool[poolID].autoStatus = 0;
 }
