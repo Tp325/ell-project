@@ -30,11 +30,12 @@ void Communication::receiveFromSink() {
   }
   while (!isEmpty(buffDataFromSink)) {
     bufferMsgFromSink = dequeue(buffDataFromSink);
-    serializeJson(doc1, bufferMsgFromSink);
+    deserializeJson(doc1, bufferMsgFromSink);
     IDOfPool = doc1["ID"].as<int>();
     pool[IDOfPool].poolID = doc1["ID"].as<int>();
     pool[IDOfPool].autoStatus = doc1["a"].as<uint8_t>();
     pool[IDOfPool].outStatus = doc1["o"].as<uint8_t>();
     pool[IDOfPool].inStatus = doc1["i"].as<uint8_t>();
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
