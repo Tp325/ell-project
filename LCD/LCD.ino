@@ -30,7 +30,7 @@ void vtaskButton(void *pvParameters) {
 void vtaskDisplay(void *pvParameters) {
   while (1) {
     screen.screenOn();
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(20 / portTICK_PERIOD_MS);
   }
 }
 void vtaskSendToSink(void *pvParameters) {
@@ -48,19 +48,6 @@ void vtaskReceiveFromSink(void *pvParameters) {
   String msgBuffer;
   while (1) {
     communication.receiveFromSink();
-    while (!isEmpty(buffDataFromSink)) {
-      msgBuffer = dequeue(buffDataFromSink);
-      if (msgBuffer == "inOK") {
-        pool[currentPage].inStatus -= 2;
-      }
-      if (msgBuffer == "outOK")
-        pool[currentPage].outStatus -= 2;
-      if (msgBuffer != "inOK" && msgBuffer != "outOK" && msgBuffer != "none") {
-        deserializeJson(doc, msgBuffer);
-        pool[lastPage != 0 ? lastPage : currentPage].mucnuoc = doc["mu"].as<float>();
-      }
-      vTaskDelay(100 / portTICK_PERIOD_MS);
-    }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }

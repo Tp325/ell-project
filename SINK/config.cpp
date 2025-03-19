@@ -13,10 +13,11 @@ uint8_t preambleLength = 12;
 uint8_t amplifierGain = 0;
 //*************communication***********
 String msgFromDisplay;
-String msgSendToDisplay;
-String msgSendToNode;
+String msgToDisplay;
+
+String msgToNode;
 String msgFromNode;
-bool isHavingMsg = 0;
+
 
 //**************CircularQueue************
 CircularQueue *buffDataFromDisplay = createQueue(30);
