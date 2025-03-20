@@ -1,14 +1,21 @@
 #include "Communication.h"
 SX1278 radio = new Module(Nss, Dio0, Rst, Dio1);
-DynamicJsonDocument doc;
+DynamicJsonDocument doc(1024);
+int state;
+int trasmitState;
 volatile bool receiveFlag = false;
 void setReceiveFlag() {
+  Serial.println("flag");
   receiveFlag = true;
+  if (isSended == 1) {
+    receiveFlag = false;
+    isSended = 0;
+  }
 }
 Communication::Communication() {
 }
 void Communication::begin() {
-  Serial2.begin(9600, SERIAL_8N1, 16, 17);
+  Serial2.begin(115200 , SERIAL_8N1, 16, 17);
   // Cài đặt driver UART2 với buffer RX 1024 byte và TX 1024 byte
   uart_driver_install(UART_NUM_2, 1024, 1024, 0, NULL, 0);
   Serial.println("[SX1278] Initializing ... ");
@@ -44,8 +51,9 @@ void Communication::receiveFromDisplay() {
 void Communication::sendToNode() {
   while (!isEmpty(buffDataFromDisplay)) {
     msgToNode = dequeue(buffDataFromDisplay);
-    state = radio.transmit(msgToNode);
-    if (state == RADIOLIB_ERR_NONE) {
+    isSended = 1;
+    trasmitState = radio.transmit(msgToNode);
+    if (trasmitState == RADIOLIB_ERR_NONE) {
       Serial.print("send: ");
       Serial.println(msgToNode);
       Serial.println("transmission finished!");
@@ -53,8 +61,8 @@ void Communication::sendToNode() {
       Serial.print("failed, code ");
       Serial.println(state);
     }
-    vTaskDelay(50 / portTICK_PERIOD_MS);
-    radio.startReceive();
+    vTaskDelay(5 / portTICK_PERIOD_MS);
+    state = radio.startReceive();
   }
 }
 
@@ -63,7 +71,7 @@ void Communication::receiveFromNode() {
     receiveFlag = false;
     state = radio.readData(msgFromNode);
     if (state == RADIOLIB_ERR_NONE) {
-      if (!isFull(buffDataFromNode) && msgFromNode != msgToNode) {
+      if (!isFull(buffDataFromNode)) {
         Serial.print("receive: ");
         Serial.println(msgFromNode);
         enqueueData(buffDataFromNode, msgFromNode.c_str());
@@ -77,6 +85,6 @@ void Communication::sendToDisplay() {
     msgToDisplay = dequeue(buffDataFromNode);
     Serial.println(msgToDisplay);
     Serial2.print(msgToDisplay);
-    vTaskDelay(50 / portTICK_PERIOD_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }

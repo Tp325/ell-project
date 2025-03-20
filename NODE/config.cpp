@@ -25,6 +25,7 @@ uint8_t amplifierGain = 0;
 String msgFromSink;
 String msgToSink;
 String buffMsgFromSink;
+bool isSended;
 
 
 

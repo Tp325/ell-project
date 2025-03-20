@@ -10,10 +10,10 @@ extern DynamicJsonDocument doc;
 extern SX1278 radio;
 extern volatile bool receiveFlag;
 extern void setReceiveFlag();
+extern int state;
+extern int trasmitState;
 class Communication {
 private:
-  int state;
-  
 public:
   Communication();
   void begin();

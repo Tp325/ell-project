@@ -48,20 +48,22 @@ void vTaskExecution(void *pvParameters) {
   execution.begin();
   while (1) {
     for (int i = 1; i <= numberOfPool; i++) {
-      if (pool[i].inStatus == 1) {
-        execution.supplyIn(i);
-      } else {
-        execution.xsupplyIn(i);
-      }
-      if (pool[i].outStatus == 1) {
-        execution.drainOut(i);
-      } else {
-        execution.xdrainOut(i);
-      }
       if (pool[i].autoStatus == 1) {
-        // pool[i].mucnuoc = pool[i].SensorpieLenght - sensor.getSensorValue(pool[i].IDOfSensor) / 10.0;
-        // execution.autoRun(i);
+        pool[i].mucnuoc = pool[i].SensorpieLenght - sensor.getSensorValue(pool[i].IDOfSensor) / 10.0;
+        execution.autoRun(i);
+      } else {
+        if (pool[i].inStatus == 1) {
+          execution.supplyIn(i);
+        } else {
+          execution.xsupplyIn(i);
+        }
+        if (pool[i].outStatus == 1) {
+          execution.drainOut(i);
+        } else {
+          execution.xdrainOut(i);
+        }
       }
+      vTaskDelay(100 / portTICK_PERIOD_MS);
     }
     vTaskDelay(5000 / portTICK_PERIOD_MS);
   }
@@ -72,6 +74,6 @@ void vTaskReadSensor(void *pvParameters) {
       communication.sendToSink(String("{\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0) + "}"));
       vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
-    vTaskDelay(60000 * 2 / portTICK_PERIOD_MS);
+    vTaskDelay(60000  / portTICK_PERIOD_MS);
   }
 }

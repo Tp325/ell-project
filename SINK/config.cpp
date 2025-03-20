@@ -14,9 +14,9 @@ uint8_t amplifierGain = 0;
 //*************communication***********
 String msgFromDisplay;
 String msgToDisplay;
-
 String msgToNode;
 String msgFromNode;
+bool isSended;
 
 
 //**************CircularQueue************

@@ -17,19 +17,19 @@ void loop() {
 void vtaskSendToNode(void *pvParameters) {
   while (1) {
     communication.sendToNode();
-    vTaskDelay(20 / portTICK_PERIOD_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
 void vtaskReceiveFromNode(void *pvParameters) {
   while (1) {
     communication.receiveFromNode();
-    vTaskDelay(20 / portTICK_PERIOD_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
 void vtaskReciveFromDisplay(void *pvParameters) {
   while (1) {
     communication.receiveFromDisplay();
-    vTaskDelay(20 / portTICK_PERIOD_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
 void vtaskSendToDisplay(void *pvParameters) {

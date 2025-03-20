@@ -1,9 +1,16 @@
 #include "Communication.h"
 DynamicJsonDocument doc(1024);
 SX1278 radio = new Module(Nss, Dio0, Rst, Dio1);
+int state;
+int trasmitState = -1;
 volatile bool receiveFlag = false;
 void setReceiveFlag() {
+  Serial.println("flag");
   receiveFlag = true;
+  if (isSended == 1) {
+    receiveFlag = false;
+    isSended = 0;
+  }
 }
 Communication::Communication() {
 }
@@ -19,8 +26,7 @@ void Communication::begin() {
     while (true) { vTaskDelay(100 / portTICK_PERIOD_MS); }
   }
   // sensor.begin();
-  radio.setDio0Action(setReceiveFlag, RISING);
-  state = radio.startReceive();
+  radio.setPacketReceivedAction(setReceiveFlag);
   Serial.print(F("[SX1278] Starting to listen ... "));
   state = radio.startReceive();
   if (state == RADIOLIB_ERR_NONE) {
@@ -36,7 +42,7 @@ void Communication::receiveFromSink() {
     receiveFlag = false;
     state = radio.readData(msgFromSink);
     if (state == RADIOLIB_ERR_NONE) {
-      if (!isFull(buffDataFromSink) && msgFromSink != msgToSink) {
+      if (!isFull(buffDataFromSink)) {
         Serial.print("receive: ");
         Serial.println(msgFromSink);
         enqueueData(buffDataFromSink, msgFromSink.c_str());
@@ -74,7 +80,7 @@ void Communication::analizeData() {
     } else {
       Serial.println("error read json");
     }
-    vTaskDelay(50 / portTICK_PERIOD_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
 void Communication::sendToSink(String msg) {
@@ -82,21 +88,21 @@ void Communication::sendToSink(String msg) {
     enqueueData(buffDataToSink, msg.c_str());
   }
 }
-
 void Communication::sendToSink() {
   while (!isEmpty(buffDataToSink)) {
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(20 / portTICK_PERIOD_MS);
     msgToSink = dequeue(buffDataToSink);
-    state = radio.transmit(msgToSink);
-    if (state == RADIOLIB_ERR_NONE) {
+    isSended = 1;
+    trasmitState = radio.transmit(msgToSink);
+    if (trasmitState == RADIOLIB_ERR_NONE) {
       Serial.print("send: ");
       Serial.println(msgToSink);
       Serial.println("transmission finished!");
     } else {
       Serial.print("failed, code ");
-      Serial.println(state);
+      Serial.println(trasmitState);
     }
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-    radio.startReceive();
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+    state = radio.startReceive();
   }
 }

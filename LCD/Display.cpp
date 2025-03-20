@@ -220,130 +220,103 @@ void Display::screenOn() {
 
 void Display::homePage(Pool A) {
   GLCD_TextGoTo(0, 0);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" HE THONG QUAN TRAC");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_TextGoTo(7, 2);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" BE ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.poolID));
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_TextGoTo(0, 5);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" MUC NUOC: ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.mucnuoc));
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" cm       ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_TextGoTo(0, 8);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" VAN VAO: ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   if (pool[currentPage].inStatus == 2 || pool[currentPage].inStatus == 3) {
     GLCD_WriteString("---    ");
-    vTaskDelay(15 / portTICK_PERIOD_MS);
+    vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
     if (A.inStatus == 0) {
       GLCD_WriteString("OFF       ");
-      vTaskDelay(15 / portTICK_PERIOD_MS);
+      vTaskDelay(5 / portTICK_PERIOD_MS);
     }
     if (A.inStatus == 1) {
       GLCD_WriteString("ON       ");
-      vTaskDelay(15 / portTICK_PERIOD_MS);
+      vTaskDelay(5 / portTICK_PERIOD_MS);
     }
   }
   GLCD_TextGoTo(0, 11);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" VAN RA: ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   if (pool[currentPage].outStatus == 2 || pool[currentPage].outStatus == 3) {
     pool[currentPage].outStatus == 2 ? 1 : 0;
     GLCD_WriteString("---    ");
-    vTaskDelay(15 / portTICK_PERIOD_MS);
+    vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
     if (A.outStatus == 0) {
       GLCD_WriteString("OFF       ");
-      vTaskDelay(15 / portTICK_PERIOD_MS);
+      vTaskDelay(5 / portTICK_PERIOD_MS);
     }
     if (A.outStatus == 1) {
       GLCD_WriteString("ON       ");
-      vTaskDelay(15 / portTICK_PERIOD_MS);
+      vTaskDelay(5 / portTICK_PERIOD_MS);
     }
   }
   GLCD_TextGoTo(0, 14);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" TU DONG: ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   if (pool[currentPage].autoStatus == 2 || pool[currentPage].autoStatus == 3) {
     GLCD_WriteString("---    ");
-    vTaskDelay(15 / portTICK_PERIOD_MS);
+    vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
     if (A.autoStatus == 1) {
       GLCD_WriteString("ON       ");
-      vTaskDelay(15 / portTICK_PERIOD_MS);
+      vTaskDelay(5 / portTICK_PERIOD_MS);
     }
     if (A.autoStatus == 0) {
       GLCD_WriteString("OFF       ");
-      vTaskDelay(15 / portTICK_PERIOD_MS);
+      vTaskDelay(5 / portTICK_PERIOD_MS);
     }
   }
 }
 void Display::settingPage(Pool A) {
 
   GLCD_TextGoTo(0, 0);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString("  CAI DAT THONG SO  ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
 
   GLCD_TextGoTo(7, 2);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" BE ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.poolID));
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
 
   GLCD_TextGoTo(0, 5);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" CAO NHAT: ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.maxValue));
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" cm ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
 
   GLCD_TextGoTo(0, 8);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" GIUA: ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.midValue));
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" cm ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
 
   GLCD_TextGoTo(0, 11);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" THAP NHAT: ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.minValue));
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString(" cm ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
-
   GLCD_TextGoTo(0, 14);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
   GLCD_WriteString("               ");
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
 
   // hàm tạo con trỏ để cuối cùng của code này
   GLCD_TextGoTo(0, pointerPossitionAtSettingPage);
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   if (isChangingValueAtSettingPage == 1)
     GLCD_WriteChar('.');
   else
     GLCD_WriteChar('>');
-  vTaskDelay(15 / portTICK_PERIOD_MS);
+  vTaskDelay(5 / portTICK_PERIOD_MS);
 }
 
 Button::Button() {}
