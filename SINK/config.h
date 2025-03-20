@@ -44,6 +44,7 @@ extern String msgFromDisplay;
 extern String msgToDisplay;
 extern String msgToNode;
 extern String msgFromNode;
+extern bool isSended;
 
 
 

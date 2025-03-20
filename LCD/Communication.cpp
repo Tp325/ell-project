@@ -5,7 +5,7 @@ DynamicJsonDocument doc1(1024);
 Communication::Communication() {
 }
 void Communication::begin() {
-  Serial2.begin(9600, SERIAL_8N1, 16, 17);
+  Serial2.begin(115200, SERIAL_8N1, 16, 17);
   uart_driver_install(UART_NUM_2, 1024, 1024, 0, NULL, 0);
 }
 void Communication::sendToSink() {

@@ -52,8 +52,7 @@ extern void createNewPool(int poolID, int supplyPin, int drainPin, byte IDOfSens
 extern String msgFromSink;
 extern String msgToSink;
 extern String buffMsgFromSink;
-
-
+extern bool isSended;
 
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromSink;
