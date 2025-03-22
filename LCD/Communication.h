@@ -13,5 +13,7 @@ public:
   void begin();
   void sendToSink();
   void receiveFromSink();
+  void analizeData();
+  void analizeDataToSink();
 };
 #endif

@@ -291,4 +291,6 @@ extern String bufferMsgFromSink;
 
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromSink;
+extern CircularQueue *buffDataToSink;
+
 #endif

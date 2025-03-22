@@ -269,7 +269,7 @@ void Display::homePage(Pool A) {
     vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
     if (A.autoStatus == 1) {
-      GLCD_WriteString("ON       ");
+      GLCD_WriteString("PROCESSING       ");
       vTaskDelay(5 / portTICK_PERIOD_MS);
     }
     if (A.autoStatus == 0) {
@@ -391,20 +391,20 @@ void Button::checkState() {
     if (digitalRead(select) == 0) {
       isChangingValueAtSettingPage = !isChangingValueAtSettingPage;
       isSettingValChange++;
-      vTaskDelay(500 / portTICK_PERIOD_MS);
+      vTaskDelay(250 / portTICK_PERIOD_MS);
     }
     if (isChangingValueAtSettingPage == 0) {
       if (digitalRead(up) == 0 && pointerPossitionAtSettingPage >= 5) {
         pointerPossitionAtSettingPage -= 3;
         if (pointerPossitionAtSettingPage < 5)
           pointerPossitionAtSettingPage = 11;
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(250 / portTICK_PERIOD_MS);
       }
       if (digitalRead(down) == 0 && pointerPossitionAtSettingPage <= 11) {
         pointerPossitionAtSettingPage += 3;
         if (pointerPossitionAtSettingPage > 11)
           pointerPossitionAtSettingPage = 5;
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(250 / portTICK_PERIOD_MS);
       }
     } else if (isChangingValueAtSettingPage == 1) {
       if (digitalRead(up) == 0) {

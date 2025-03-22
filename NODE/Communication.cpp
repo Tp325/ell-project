@@ -5,7 +5,7 @@ int state;
 int trasmitState = -1;
 volatile bool receiveFlag = false;
 void setReceiveFlag() {
-  Serial.println("flag");
+  // Serial.println("flag");
   receiveFlag = true;
   if (isSended == 1) {
     receiveFlag = false;
@@ -43,8 +43,8 @@ void Communication::receiveFromSink() {
     state = radio.readData(msgFromSink);
     if (state == RADIOLIB_ERR_NONE) {
       if (!isFull(buffDataFromSink)) {
-        Serial.print("receive: ");
-        Serial.println(msgFromSink);
+        // Serial.print("receive: ");
+        // Serial.println(msgFromSink);
         enqueueData(buffDataFromSink, msgFromSink.c_str());
       }
     }
@@ -69,6 +69,10 @@ void Communication::analizeData() {
       if (doc["a"].as<int>() == 3 || doc["a"].as<int>() == 2) {
         pool[IDOfPool].autoStatus = bool(doc["a"].as<int>() - 2);
         doc["a"] = int(pool[IDOfPool].autoStatus);
+        if (pool[IDOfPool].autoStatus == 0) {
+          pool[IDOfPool].stepOfAuto = 0;
+          pool[IDOfPool].isDoneAutoMode = 0;
+        }
       }
       pool[IDOfPool].maxValue = doc["ma"].as<float>();
       pool[IDOfPool].midValue = doc["md"].as<float>();
@@ -78,7 +82,7 @@ void Communication::analizeData() {
         enqueueData(buffDataToSink, buffMsgFromSink.c_str());
       }
     } else {
-      Serial.println("error read json");
+      // Serial.println("error read json");
     }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
@@ -90,19 +94,19 @@ void Communication::sendToSink(String msg) {
 }
 void Communication::sendToSink() {
   while (!isEmpty(buffDataToSink)) {
-    vTaskDelay(20 / portTICK_PERIOD_MS);
+    vTaskDelay(30 / portTICK_PERIOD_MS);
     msgToSink = dequeue(buffDataToSink);
     isSended = 1;
     trasmitState = radio.transmit(msgToSink);
     if (trasmitState == RADIOLIB_ERR_NONE) {
-      Serial.print("send: ");
-      Serial.println(msgToSink);
+      // Serial.print("send: ");
+      // Serial.println(msgToSink);
       Serial.println("transmission finished!");
     } else {
       Serial.print("failed, code ");
       Serial.println(trasmitState);
     }
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(5 / portTICK_PERIOD_MS);
     state = radio.startReceive();
   }
 }

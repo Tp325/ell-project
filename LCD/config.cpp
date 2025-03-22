@@ -40,3 +40,5 @@ String bufferMsgFromSink;
 
 //**************CircularQueue************
 CircularQueue *buffDataFromSink = createQueue(30);
+CircularQueue *buffDataToSink = createQueue(30);
+

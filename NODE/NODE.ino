@@ -48,6 +48,10 @@ void vTaskExecution(void *pvParameters) {
   execution.begin();
   while (1) {
     for (int i = 1; i <= numberOfPool; i++) {
+      if (pool[i].isDoneAutoMode == 1) {
+        pool[i].isDoneAutoMode = 0;
+        communication.sendToSink(String("{\"ID\":" + String(i) + ",\"a\":" + String(int(pool[i].autoStatus))) + "}");
+      }
       if (pool[i].autoStatus == 1) {
         pool[i].mucnuoc = pool[i].SensorpieLenght - sensor.getSensorValue(pool[i].IDOfSensor) / 10.0;
         execution.autoRun(i);
@@ -63,17 +67,29 @@ void vTaskExecution(void *pvParameters) {
           execution.xdrainOut(i);
         }
       }
-      vTaskDelay(100 / portTICK_PERIOD_MS);
+      vTaskDelay(10 / portTICK_PERIOD_MS);
     }
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
   }
 }
 void vTaskReadSensor(void *pvParameters) {
+  for (int i = 1; i <= numberOfPool; i++) {
+    communication.sendToSink(String("{\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0) + "}"));
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+  }
   while (1) {
     for (int i = 1; i <= numberOfPool; i++) {
-      communication.sendToSink(String("{\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0) + "}"));
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      if (pool[i].autoStatus == 1) {
+        if (millis() - pool[i].timeReposeDataSensorToSink >= 15000) {
+          communication.sendToSink(String("{\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0) + "}"));
+          pool[i].timeReposeDataSensorToSink = millis();
+        }
+      } else if (millis() - pool[i].timeReposeDataSensorToSink >= 60 * 1000) {
+        communication.sendToSink(String("{\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0) + "}"));
+        pool[i].timeReposeDataSensorToSink = millis();
+      }
+      vTaskDelay(10 / portTICK_PERIOD_MS);
     }
-    vTaskDelay(60000  / portTICK_PERIOD_MS);
+    vTaskDelay(2500 / portTICK_PERIOD_MS);
   }
 }
