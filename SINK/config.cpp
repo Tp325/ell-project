@@ -16,9 +16,22 @@ String msgFromDisplay;
 String msgToDisplay;
 String msgToNode;
 String msgFromNode;
+String msgFromServer;
+String msgToServer;
 bool isSended;
+
+// Thông tin MQTT Broker
+bool isWifiConnect = 0;
+const char *mqtt_server = "103.221.220.183";
+const int mqtt_port = 1883;
+const char *mqtt_user = "api1@Iotlab";
+const char *mqtt_pass = "Iotlab@2023";
+String topicReceive = "ellReceive";
+String topicSend = "ellSend";
 
 
 //**************CircularQueue************
 CircularQueue *buffDataFromDisplay = createQueue(30);
 CircularQueue *buffDataFromNode = createQueue(30);
+CircularQueue *buffDataFromServer = createQueue(30);
+CircularQueue *buffDataToServer = createQueue(30);

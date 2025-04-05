@@ -14,7 +14,7 @@ extern float carrierFrequency;
 extern float bandwidth;
 extern uint8_t spreadingFactor;
 extern uint8_t codingRate;
-extern uint8_t syncWord; // tùy chỉnh đường mạng
+extern uint8_t syncWord;  // tùy chỉnh đường mạng
 extern uint8_t outputPower;
 extern uint8_t preambleLength;
 extern uint8_t amplifierGain;
@@ -44,6 +44,8 @@ extern String msgFromDisplay;
 extern String msgToDisplay;
 extern String msgToNode;
 extern String msgFromNode;
+extern String msgFromServer;
+extern String msgToServer;
 extern bool isSended;
 
 
@@ -51,7 +53,16 @@ extern bool isSended;
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromDisplay;
 extern CircularQueue *buffDataFromNode;
+extern CircularQueue *buffDataFromServer;
+extern CircularQueue *buffDataToServer;
 
 
-
+// Thông tin MQTT Broker
+extern bool isWifiConnect;
+extern const char *mqtt_server;
+extern const int mqtt_port;
+extern const char *mqtt_user;
+extern const char *mqtt_pass;
+extern String topicReceive;
+extern String topicSend;
 #endif

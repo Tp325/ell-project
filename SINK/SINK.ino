@@ -9,6 +9,8 @@ void setup() {
   xTaskCreate(vtaskReciveFromDisplay, "taskReciveFromDisplay", 20000, NULL, 5, NULL);
   xTaskCreate(vtaskReceiveFromNode, "taskReceiveFromNode", 20000, NULL, 5, NULL);
   xTaskCreate(vtaskSendToDisplay, "taskSendToDisplay", 20000, NULL, 5, NULL);
+  xTaskCreate(vtaskProcessWiFi, "taskProcessWiFi", 20000, NULL, 5, NULL);
+  xTaskCreate(vtaskProcessMQTT, "taskProcessMQTT", 20000, NULL, 5, NULL);
   vTaskDelete(NULL);
 }
 
@@ -35,6 +37,18 @@ void vtaskReciveFromDisplay(void *pvParameters) {
 void vtaskSendToDisplay(void *pvParameters) {
   while (1) {
     communication.sendToDisplay();
+    vTaskDelay(20 / portTICK_PERIOD_MS);
+  }
+}
+void vtaskProcessWiFi(void *pvParameters) {
+  while (1) {
+    communication.processWiFi();
+    vTaskDelay(20 / portTICK_PERIOD_MS);
+  }
+}
+void vtaskProcessMQTT(void *pvParameters) {
+  while (1) {
+    communication.processMQTT();
     vTaskDelay(20 / portTICK_PERIOD_MS);
   }
 }

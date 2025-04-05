@@ -1,6 +1,9 @@
 #include "Communication.h"
 SX1278 radio = new Module(Nss, Dio0, Rst, Dio1);
 DynamicJsonDocument doc(1024);
+WiFiManager wm;
+WiFiClient espClient;
+PubSubClient client(espClient);
 int state;
 int trasmitState;
 volatile bool receiveFlag = false;
@@ -37,6 +40,13 @@ void Communication::begin() {
     Serial.print(F("failed, code "));
     Serial.println(state);
     while (true) { delay(10); }
+  }
+  WiFi.mode(WIFI_STA);
+  wm.setConfigPortalBlocking(false);
+  if (wm.autoConnect("EllPoolWiFi")) {
+    Serial.println("connected...yeey :)");
+  } else {
+    Serial.println("Configportal running");
   }
 }
 
@@ -85,7 +95,48 @@ void Communication::sendToDisplay() {
     // Serial.print("send to display: ");
     msgToDisplay = dequeue(buffDataFromNode);
     // Serial.println(msgToDisplay);
+    client.publish(topicSend.c_str(), msgToDisplay.c_str());
     Serial2.println(msgToDisplay);
     vTaskDelay(20 / portTICK_PERIOD_MS);
+  }
+}
+void Communication::processWiFi() {
+  wm.process();
+  if (WiFi.status() == WL_CONNECTED) {
+    if (isWifiConnect = 0) {
+      client.setServer(mqtt_server, mqtt_port);
+      client.setCallback(callbackWrapper);
+      connectMqtt();
+      isWifiConnect = 1;
+    }
+  } else {
+    isWifiConnect = 0;
+  }
+}
+void Communication::connectMqtt() {
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    if (client.connect("EllPool", mqtt_user, mqtt_pass)) {
+      Serial.println("connected");
+      client.subscribe(topicReceive.c_str());
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+    }
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+  }
+}
+void Communication::processMQTT() {
+  if (!client.connected()) {
+    connectMqtt();
+  }
+  client.loop();
+}
+void Communication::callbackmqtt(char* topic, byte* message, unsigned int length) {
+  for (int i = 0; i < length; i++) {
+    msg += (char)message[i];
+  }
+  if (!isFull(buffDataFromDisplay)) {
+    enqueueData(buffDataFromDisplay, msg.c_str());
   }
 }
