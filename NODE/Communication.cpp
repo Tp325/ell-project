@@ -60,20 +60,22 @@ void Communication::analizeData() {
       pool[IDOfPool].poolID = doc["ID"].as<int>();
       if (doc["i"].as<int>() == 3 || doc["i"].as<int>() == 2) {
         pool[IDOfPool].inStatus = bool(doc["i"].as<int>() - 2);
-        doc["i"] = int(pool[IDOfPool].inStatus);
       }
       if (doc["o"].as<int>() == 3 || doc["o"].as<int>() == 2) {
         pool[IDOfPool].outStatus = bool(doc["o"].as<int>() - 2);
-        doc["o"] = int(pool[IDOfPool].outStatus);
       }
       if (doc["a"].as<int>() == 3 || doc["a"].as<int>() == 2) {
+        pool[IDOfPool].outStatus = false;
+        pool[IDOfPool].inStatus = false;
         pool[IDOfPool].autoStatus = bool(doc["a"].as<int>() - 2);
-        doc["a"] = int(pool[IDOfPool].autoStatus);
         if (pool[IDOfPool].autoStatus == 0) {
           pool[IDOfPool].stepOfAuto = 0;
           pool[IDOfPool].isDoneAutoMode = 0;
         }
       }
+      doc["a"] = int(pool[IDOfPool].autoStatus);
+      doc["o"] = int(pool[IDOfPool].outStatus);
+      doc["i"] = int(pool[IDOfPool].inStatus);
       pool[IDOfPool].maxValue = doc["ma"].as<float>();
       pool[IDOfPool].midValue = doc["md"].as<float>();
       pool[IDOfPool].minValue = doc["mn"].as<float>();

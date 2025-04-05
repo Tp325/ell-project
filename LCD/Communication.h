@@ -6,6 +6,8 @@
 #include <ArduinoJson.h>
 #include <ArduinoJson.hpp>
 extern DynamicJsonDocument doc;
+extern DynamicJsonDocument doc1;
+
 class Communication {
 private:
 public:

@@ -218,7 +218,7 @@ void Display::screenOn() {
   }
 }
 
-void Display::homePage(Pool A) {
+void Display::homePage(Pool &A) {
   GLCD_TextGoTo(0, 0);
   GLCD_WriteString(" HE THONG QUAN TRAC");
   vTaskDelay(5 / portTICK_PERIOD_MS);
@@ -233,7 +233,7 @@ void Display::homePage(Pool A) {
   vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_TextGoTo(0, 8);
   GLCD_WriteString(" VAN VAO: ");
-  if (pool[currentPage].inStatus == 2 || pool[currentPage].inStatus == 3) {
+  if (A.inStatus == 2 || A.inStatus == 3) {
     GLCD_WriteString("---    ");
     vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
@@ -248,8 +248,7 @@ void Display::homePage(Pool A) {
   }
   GLCD_TextGoTo(0, 11);
   GLCD_WriteString(" VAN RA: ");
-  if (pool[currentPage].outStatus == 2 || pool[currentPage].outStatus == 3) {
-    pool[currentPage].outStatus == 2 ? 1 : 0;
+  if (A.outStatus == 2 || A.outStatus == 3) {
     GLCD_WriteString("---    ");
     vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
@@ -264,17 +263,23 @@ void Display::homePage(Pool A) {
   }
   GLCD_TextGoTo(0, 14);
   GLCD_WriteString(" TU DONG: ");
-  if (pool[currentPage].autoStatus == 2 || pool[currentPage].autoStatus == 3) {
+  if (A.autoStatus == 2 || A.autoStatus == 3) {
     GLCD_WriteString("---    ");
     vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
-    if (A.autoStatus == 1) {
-      GLCD_WriteString("PROCESSING       ");
-      vTaskDelay(5 / portTICK_PERIOD_MS);
-    }
-    if (A.autoStatus == 0) {
-      GLCD_WriteString("OFF       ");
-      vTaskDelay(5 / portTICK_PERIOD_MS);
+    if (A.autoStatus == 4) {
+      GLCD_WriteString("ERROR  ");
+      vTaskDelay(100 / portTICK_PERIOD_MS);
+      A.autoStatus = 0;
+    } else {
+      if (A.autoStatus == 1) {
+        GLCD_WriteString("PROCESSING       ");
+        vTaskDelay(5 / portTICK_PERIOD_MS);
+      }
+      if (A.autoStatus == 0) {
+        GLCD_WriteString("OFF       ");
+        vTaskDelay(5 / portTICK_PERIOD_MS);
+      }
     }
   }
 }
@@ -362,12 +367,16 @@ void Button::checkState() {
       vTaskDelay(500 / portTICK_PERIOD_MS);
     }
     if (digitalRead(autoButton) == 0) {
-      if (pool[currentPage].autoStatus < 2)
-        pool[currentPage].autoStatus = pool[currentPage].autoStatus == 0 ? 3 : 2;
-      pool[currentPage].outStatus = 0;
-      pool[currentPage].inStatus = 0;
-      isValStatusButtonPressed = 1;
-      vTaskDelay(500 / portTICK_PERIOD_MS);
+      if (pool[currentPage].maxValue > pool[currentPage].midValue && pool[currentPage].midValue > pool[currentPage].minValue) {
+        if (pool[currentPage].autoStatus < 2)
+          pool[currentPage].autoStatus = pool[currentPage].autoStatus == 0 ? 3 : 2;
+        pool[currentPage].outStatus = 0;
+        pool[currentPage].inStatus = 0;
+        isValStatusButtonPressed = 1;
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+      } else {
+        pool[currentPage].autoStatus = 4;
+      }
     }
     if (pool[currentPage].autoStatus == 0) {
       if (digitalRead(supplyval) == 0) {

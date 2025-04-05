@@ -21,7 +21,7 @@ public:
   Display();
   void begin();
   void screenOn();
-  void homePage(Pool A);     // page 1..n
+  void homePage(Pool &A);     // page 1..n
   void settingPage(Pool A);  //page 0
 };
 class Button {
