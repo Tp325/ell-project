@@ -103,7 +103,7 @@ void Communication::sendToDisplay() {
 void Communication::processWiFi() {
   wm.process();
   if (WiFi.status() == WL_CONNECTED) {
-    if (isWifiConnect = 0) {
+    if (isWifiConnect == 0) {
       client.setServer(mqtt_server, mqtt_port);
       client.setCallback(callbackWrapper);
       connectMqtt();
@@ -139,4 +139,5 @@ void Communication::callbackmqtt(char* topic, byte* message, unsigned int length
   if (!isFull(buffDataFromDisplay)) {
     enqueueData(buffDataFromDisplay, msg.c_str());
   }
+  msg = "";
 }
