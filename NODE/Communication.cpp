@@ -58,17 +58,30 @@ void Communication::analizeData() {
     if (!error) {
       IDOfPool = doc["ID"].as<int>();
       pool[IDOfPool].poolID = doc["ID"].as<int>();
-      if (doc["i"].as<int>() == 3 || doc["i"].as<int>() == 2) {
-        pool[IDOfPool].inStatus = bool(doc["i"].as<int>() - 2);
-      }
-      if (doc["o"].as<int>() == 3 || doc["o"].as<int>() == 2) {
-        pool[IDOfPool].outStatus = bool(doc["o"].as<int>() - 2);
-      }
-      if (doc["a"].as<int>() == 3 || doc["a"].as<int>() == 2) {
-        pool[IDOfPool].outStatus = false;
-        pool[IDOfPool].inStatus = false;
-        pool[IDOfPool].autoStatus = bool(doc["a"].as<int>() - 2);
-        if (pool[IDOfPool].autoStatus == 0) {
+      if (doc["is"].as<int>() == 0) {
+        if (doc["i"].as<int>() == 3 || doc["i"].as<int>() == 2) {
+          pool[IDOfPool].inStatus = bool(doc["i"].as<int>() - 2);
+        }
+        if (doc["o"].as<int>() == 3 || doc["o"].as<int>() == 2) {
+          pool[IDOfPool].outStatus = bool(doc["o"].as<int>() - 2);
+        }
+        if (doc["a"].as<int>() == 3 || doc["a"].as<int>() == 2) {
+          pool[IDOfPool].outStatus = false;
+          pool[IDOfPool].inStatus = false;
+          pool[IDOfPool].autoStatus = bool(doc["a"].as<int>() - 2);
+          if (pool[IDOfPool].autoStatus == 0) {
+            pool[IDOfPool].stepOfAuto = 0;
+            pool[IDOfPool].isDoneAutoMode = 0;
+          }
+        }
+      } else if (doc["is"].as<int>() == 1) {
+        pool[IDOfPool].inStatus = bool(doc["i"].as<int>());
+        pool[IDOfPool].outStatus = bool(doc["o"].as<int>());
+        if (bool(doc["a"].as<int>()) == 1) {
+          pool[IDOfPool].outStatus = false;
+          pool[IDOfPool].inStatus = false;
+          pool[IDOfPool].autoStatus = bool(doc["a"].as<int>();
+        } else if (bool(doc["a"].as<int>()) == 0) {
           pool[IDOfPool].stepOfAuto = 0;
           pool[IDOfPool].isDoneAutoMode = 0;
         }

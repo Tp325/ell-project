@@ -23,12 +23,9 @@ void Storage::saveToEEPROM() {
       EEPROM.put(pool[IDOfPool].adrressOfSavedDataInEEPROM + sizeof(float), pool[IDOfPool].midValue);
       EEPROM.put(pool[IDOfPool].adrressOfSavedDataInEEPROM + (2 * sizeof(float)), pool[IDOfPool].minValue);
       EEPROM.commit();
-      hasData = true;
     }
   }
-  if (hasData) {
-    EEPROM.commit();
-  }
+
 }
 float Storage::readFromEEPROM(int adrress) {
   EEPROM.get(adrress, buffReadData);

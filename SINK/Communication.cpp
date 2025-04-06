@@ -4,6 +4,7 @@ DynamicJsonDocument doc(1024);
 WiFiManager wm;
 WiFiClient espClient;
 PubSubClient client(espClient);
+Communication* Communication::instance = nullptr;
 int state;
 int trasmitState;
 volatile bool receiveFlag = false;

@@ -23,6 +23,7 @@ void Communication::receiveFromSink() {
   }
 }
 void Communication::analizeDataToSink() {
+  doc["is"] = 0;                                                    //is send by server
   doc["ID"] = pool[lastPage != 0 ? lastPage : currentPage].poolID;  //
   doc["i"] = uint8_t(pool[lastPage != 0 ? lastPage : currentPage].inStatus);
   doc["o"] = uint8_t(pool[lastPage != 0 ? lastPage : currentPage].outStatus);
@@ -41,14 +42,32 @@ void Communication::analizeData() {
     bufferMsgFromSink = dequeue(buffDataFromSink);
     deserializeJson(doc1, bufferMsgFromSink);
     IDOfPool = doc1["ID"].as<int>();
+    pool[IDOfPool].poolID = doc1["ID"].as<int>();
     if (doc1["mucn"].is<float>()) {
       pool[IDOfPool].poolID = doc1["ID"].as<int>();
       pool[IDOfPool].mucnuoc = doc1["mucn"].as<float>();
     } else {
-      pool[IDOfPool].poolID = doc1["ID"].as<int>();
-      pool[IDOfPool].autoStatus = doc1["a"].as<uint8_t>();
-      pool[IDOfPool].outStatus = doc1["o"].as<uint8_t>();
-      pool[IDOfPool].inStatus = doc1["i"].as<uint8_t>();
+      if (doc1["is"].as<int>() == 0) {
+        pool[IDOfPool].autoStatus = doc1["a"].as<uint8_t>();
+        pool[IDOfPool].outStatus = doc1["o"].as<uint8_t>();
+        pool[IDOfPool].inStatus = doc1["i"].as<uint8_t>();
+      } else if (doc1["is"].as<int>() == 1) {
+        pool[IDOfPool].autoStatus = doc1["a"].as<uint8_t>();
+        pool[IDOfPool].outStatus = doc1["o"].as<uint8_t>();
+        pool[IDOfPool].inStatus = doc1["i"].as<uint8_t>();
+        if (pool[IDOfPool].maxValue != doc1["ma"].as<float>()) {
+          pool[IDOfPool].maxValue = doc1["ma"].as<float>();
+          isSettingValChange = 2;
+        }
+        if (pool[IDOfPool].midValue != doc1["md"].as<float>()) {
+          pool[IDOfPool].midValue = doc1["md"].as<float>();
+          isSettingValChange = 2;
+        }
+        if (pool[IDOfPool].minValue != doc1["mn"].as<float>()) {
+          pool[IDOfPool].minValue = doc1["mn"].as<float>();
+          isSettingValChange = 2;
+        }
+      }
     }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }

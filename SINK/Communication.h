@@ -23,9 +23,9 @@ extern int state;
 extern int trasmitState;
 class Communication {
 private:
-  static Communication* instance;
   void connectMqtt();
   void callbackmqtt(char* topic, byte* message, unsigned int length);
+  static Communication* instance;
   static void callbackWrapper(char* topic, byte* payload, unsigned int length) {
     instance->callbackmqtt(topic, payload, length);
   }
