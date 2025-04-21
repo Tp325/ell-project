@@ -1,21 +1,26 @@
 #include "Display.h"
 #include "Communication.h"
+#include "Storage.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 Display screen;
 Communication communication;
 Button button;
+Storage storage;
 void setup() {
   creatNewPool(3);
-  Serial.begin(9600);
   communication.begin();
   screen.begin();
+  storage.begin();
+  delay(1000);
   xTaskCreatePinnedToCore(vtaskButton, "taskButton", 20000, NULL, 5, NULL, 0);
   xTaskCreate(vtaskDisplay, "taskDisplay", 20000, NULL, 5, NULL);
   xTaskCreate(vtaskSensorDetect, "taskSensorDetect", 4096, NULL, 5, NULL);
-  xTaskCreate(vtaskSendToSink, "taskSendToSink", 10000, NULL, 5, NULL);
-  xTaskCreate(vtaskReceiveFromSink, "taskReceiveFromSink", 10000, NULL, 5, NULL);
-
+  xTaskCreate(vtaskSendToSink, "taskSendToSink", 20000, NULL, 5, NULL);
+  xTaskCreate(vtaskReceiveFromSink, "taskReceiveFromSink", 20000, NULL, 5, NULL);
+  xTaskCreate(vTaskAnalize, "TaskAnalize", 20000, NULL, 5, NULL);
+  xTaskCreate(vtaskAnalizeDataToSink, "taskAnalizeDataToSink", 20000, NULL, 5, NULL);
+  xTaskCreate(vtaskSaveToEEPROM, "taskSaveToEEPROM", 20000, NULL, 5, NULL);
   vTaskDelete(NULL);
 }
 void loop() {
@@ -30,24 +35,52 @@ void vtaskButton(void *pvParameters) {
 void vtaskDisplay(void *pvParameters) {
   while (1) {
     screen.screenOn();
-    vTaskDelay(20 / portTICK_PERIOD_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
-void vtaskSendToSink(void *pvParameters) {
+void vtaskSaveToEEPROM(void *pvParameters) {
   while (1) {
+    storage.saveToEEPROM();
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+  }
+}
+void vtaskAnalizeDataToSink(void *pvParameters) {
+  while (1) {
+    if (command != "") {
+      if (command == "GD") {
+        communication.analizeDataToSink();
+      }
+    }
     if (isValStatusButtonPressed == 1 || isSettingValChange == 2) {
-      communication.sendToSink();
-      vTaskDelay(100 / portTICK_PERIOD_MS);
-      isValStatusButtonPressed = 0;
+      communication.analizeDataToSink();
       isSettingValChange = 0;
+      isValStatusButtonPressed = 0;
+    }
+    if (haveDifferentValue == 1 || isSettingValChange == 2) {
+      if (!isFull(buffDataToEEPROM)) {
+        msgToEEPROM = String(lastPage);
+        enqueueData(buffDataToEEPROM, msgToEEPROM.c_str());
+      }
+      haveDifferentValue = 0;
     }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
+void vtaskSendToSink(void *pvParameters) {
+  while (1) {
+    communication.sendToSink();
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+  }
+}
 void vtaskReceiveFromSink(void *pvParameters) {
-  String msgBuffer;
   while (1) {
     communication.receiveFromSink();
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+  }
+}
+void vTaskAnalize(void *pvParameters) {
+  while (1) {
+    communication.analizeData();
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }

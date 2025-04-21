@@ -14,6 +14,7 @@ void creatNewPool(int numberPool) {
     pool[i].inStatus = 0;
     pool[i].outStatus = 0;
     pool[i].autoStatus = 0;
+    pool[i].adrressOfSavedDataInEEPROM = 12 * i - 11;
   }
 }
 int numberOfPool = 0;
@@ -31,12 +32,18 @@ uint8_t isSettingValChange = 0;
 bool isPageChangeToSettingPage = 0;
 int pointerPossitionAtSettingPage = 5;
 bool isChangingValueAtSettingPage = 0;
+bool haveDifferentValue = 0;
+
 //********** communication**********
 uint8_t IDOfPool;
 String msgToSink;
 String msgFromSink;
 String bufferMsgFromSink;
+String command;
+String msgToEEPROM;
 
 
 //**************CircularQueue************
-CircularQueue *buffDataFromSink = createQueue(30);
+CircularQueue *buffDataFromSink = createQueue(100);
+CircularQueue *buffDataToSink = createQueue(100);
+CircularQueue *buffDataToEEPROM = createQueue(100);

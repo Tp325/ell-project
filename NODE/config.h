@@ -43,6 +43,8 @@ struct Pool {
   int supplyPin;
   int drainPin;
   float SensorpieLenght;
+  unsigned long int timeReposeDataSensorToSink = 0;
+  bool isDoneAutoMode = 0;
 };
 extern Pool pool[10];
 extern void createNewPool(int poolID, int supplyPin, int drainPin, byte IDOfSensor, float SensorpieLenght);
@@ -67,5 +69,6 @@ extern int VALVE_SUPPLY_2;
 extern int VALVE_DRAIN_2;
 extern int VALVE_SUPPLY_3;
 extern int VALVE_DRAIN_3;
+
 
 #endif
