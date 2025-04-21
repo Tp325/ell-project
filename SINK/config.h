@@ -5,10 +5,10 @@
 
 
 //******************LOra*****************
-#define Nss 5
-#define Rst 4
-#define Dio0 2
-#define Dio1 14
+#define Nss 21
+#define Rst 27
+#define Dio0 26
+#define Dio1 25
 #define ledRed 13
 extern float carrierFrequency;
 extern float bandwidth;

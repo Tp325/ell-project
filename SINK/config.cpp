@@ -7,7 +7,7 @@ float carrierFrequency = 434.0;
 float bandwidth = 250.0;
 uint8_t spreadingFactor = 7;
 uint8_t codingRate = 8;
-uint8_t syncWord = 0x34;
+uint8_t syncWord = 0x33;
 uint8_t outputPower = 20;
 uint8_t preambleLength = 12;
 uint8_t amplifierGain = 0;
@@ -31,7 +31,7 @@ String topicSend = "ellSend";
 
 
 //**************CircularQueue************
-CircularQueue *buffDataFromDisplay = createQueue(30);
-CircularQueue *buffDataFromNode = createQueue(30);
+CircularQueue *buffDataFromDisplay = createQueue(80);
+CircularQueue *buffDataFromNode = createQueue(80);
 CircularQueue *buffDataFromServer = createQueue(30);
-CircularQueue *buffDataToServer = createQueue(30);
+CircularQueue *buffDataToServer = createQueue(80);

@@ -46,16 +46,22 @@ void vtaskSaveToEEPROM(void *pvParameters) {
 }
 void vtaskAnalizeDataToSink(void *pvParameters) {
   while (1) {
+    if (command != "") {
+      if (command == "GD") {
+        communication.analizeDataToSink();
+      }
+    }
     if (isValStatusButtonPressed == 1 || isSettingValChange == 2) {
       communication.analizeDataToSink();
-      if (isSettingValChange == 2) {
-        if (!isFull(buffDataToEEPROM)) {
-          msgToEEPROM = String(lastPage);
-          enqueueData(buffDataToEEPROM, msgToEEPROM.c_str());
-        }
-        isSettingValChange = 0;
-      }
+      isSettingValChange = 0;
       isValStatusButtonPressed = 0;
+    }
+    if (haveDifferentValue == 1 || isSettingValChange == 2) {
+      if (!isFull(buffDataToEEPROM)) {
+        msgToEEPROM = String(lastPage);
+        enqueueData(buffDataToEEPROM, msgToEEPROM.c_str());
+      }
+      haveDifferentValue = 0;
     }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
@@ -67,7 +73,6 @@ void vtaskSendToSink(void *pvParameters) {
   }
 }
 void vtaskReceiveFromSink(void *pvParameters) {
-  String msgBuffer;
   while (1) {
     communication.receiveFromSink();
     vTaskDelay(10 / portTICK_PERIOD_MS);

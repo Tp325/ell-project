@@ -29,13 +29,15 @@ private:
   static void callbackWrapper(char* topic, byte* payload, unsigned int length) {
     instance->callbackmqtt(topic, payload, length);
   }
-  String msg;
+
 public:
   Communication();
   void begin();
   void receiveFromDisplay();
   void sendToNode();
   void receiveFromNode();
+  void receiveFromServer();
+  void sendToServer();
   void sendToDisplay();
   void processWiFi();
   void processMQTT();

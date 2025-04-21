@@ -43,8 +43,8 @@ void Communication::receiveFromSink() {
     state = radio.readData(msgFromSink);
     if (state == RADIOLIB_ERR_NONE) {
       if (!isFull(buffDataFromSink)) {
-        // Serial.print("receive: ");
-        // Serial.println(msgFromSink);
+        Serial.print("receive from sink: ");
+        Serial.println(msgFromSink);
         enqueueData(buffDataFromSink, msgFromSink.c_str());
       }
     }
@@ -53,51 +53,92 @@ void Communication::receiveFromSink() {
 }
 void Communication::analizeData() {
   while (!isEmpty(buffDataFromSink)) {
+    doc.clear();
     buffMsgFromSink = dequeue(buffDataFromSink);
     DeserializationError error = deserializeJson(doc, buffMsgFromSink);
     if (!error) {
-      IDOfPool = doc["ID"].as<int>();
-      pool[IDOfPool].poolID = doc["ID"].as<int>();
+      if (doc.containsKey("ID")) {
+        IDOfPool = doc["ID"].as<int>();
+        pool[IDOfPool].poolID = IDOfPool;
+      }
       if (doc["is"].as<int>() == 0) {
-        if (doc["i"].as<int>() == 3 || doc["i"].as<int>() == 2) {
-          pool[IDOfPool].inStatus = bool(doc["i"].as<int>() - 2);
-        }
-        if (doc["o"].as<int>() == 3 || doc["o"].as<int>() == 2) {
-          pool[IDOfPool].outStatus = bool(doc["o"].as<int>() - 2);
-        }
-        if (doc["a"].as<int>() == 3 || doc["a"].as<int>() == 2) {
-          pool[IDOfPool].outStatus = false;
-          pool[IDOfPool].inStatus = false;
-          pool[IDOfPool].autoStatus = bool(doc["a"].as<int>() - 2);
-          if (pool[IDOfPool].autoStatus == 0) {
-            pool[IDOfPool].stepOfAuto = 0;
-            pool[IDOfPool].isDoneAutoMode = 0;
+        if (doc.containsKey("mucn")) {
+
+        } else {
+          if (doc.containsKey("a")) {
+            if (doc["a"].as<int>() == 3 || doc["a"].as<int>() == 2) {
+              pool[IDOfPool].outStatus = false;
+              pool[IDOfPool].inStatus = false;
+              pool[IDOfPool].autoStatus = bool(doc["a"].as<int>() - 2);
+              pool[IDOfPool].maxValue = doc["ma"].as<float>();
+              pool[IDOfPool].midValue = doc["md"].as<float>();
+              pool[IDOfPool].minValue = doc["mn"].as<float>();
+              if (pool[IDOfPool].autoStatus == 0) {
+                pool[IDOfPool].stepOfAuto = 0;
+                pool[IDOfPool].isDoneAutoMode = 0;
+              }
+              doc["a"] = int(pool[IDOfPool].autoStatus);
+            }
+          } else {
+            if (doc.containsKey("ma")) {
+              pool[IDOfPool].maxValue = doc["ma"].as<float>();
+              pool[IDOfPool].midValue = doc["md"].as<float>();
+              pool[IDOfPool].minValue = doc["mn"].as<float>();
+            } else {
+              if (doc["i"].as<int>() == 3 || doc["i"].as<int>() == 2) {
+                pool[IDOfPool].inStatus = bool(doc["i"].as<int>() - 2);
+              }
+              if (doc["o"].as<int>() == 3 || doc["o"].as<int>() == 2) {
+                pool[IDOfPool].outStatus = bool(doc["o"].as<int>() - 2);
+              }
+              doc["o"] = int(pool[IDOfPool].outStatus);
+              doc["i"] = int(pool[IDOfPool].inStatus);
+            }
           }
         }
       } else if (doc["is"].as<int>() == 1) {
-        pool[IDOfPool].inStatus = bool(doc["i"].as<int>());
-        pool[IDOfPool].outStatus = bool(doc["o"].as<int>());
-        if (bool(doc["a"].as<int>()) == 1) {
-          pool[IDOfPool].outStatus = false;
-          pool[IDOfPool].inStatus = false;
-          pool[IDOfPool].autoStatus = bool(doc["a"].as<int>();
-        } else if (bool(doc["a"].as<int>()) == 0) {
-          pool[IDOfPool].stepOfAuto = 0;
-          pool[IDOfPool].isDoneAutoMode = 0;
+        if (doc.containsKey("cm")) {
+        } else {
+          if (doc.containsKey("i")) {
+            pool[IDOfPool].inStatus = bool(doc["i"].as<int>());
+            pool[IDOfPool].outStatus = bool(doc["o"].as<int>());
+            doc["o"] = int(pool[IDOfPool].outStatus);
+            doc["i"] = int(pool[IDOfPool].inStatus);
+          } else {
+            if (doc.containsKey("a")) {
+              if (doc["a"].as<int>() == 1) {
+                pool[IDOfPool].outStatus = 0;
+                pool[IDOfPool].inStatus = 0;
+              } else if (doc["a"].as<int>() == 0) {
+                pool[IDOfPool].stepOfAuto = 0;
+                pool[IDOfPool].isDoneAutoMode = 0;
+              }
+              pool[IDOfPool].maxValue = doc["ma"].as<float>();
+              pool[IDOfPool].midValue = doc["md"].as<float>();
+              pool[IDOfPool].minValue = doc["mn"].as<float>();
+              pool[IDOfPool].autoStatus = bool(doc["a"].as<int>());
+              doc["a"] = int(pool[IDOfPool].autoStatus);
+              doc["ma"] = pool[IDOfPool].maxValue;
+              doc["md"] = pool[IDOfPool].midValue;
+              doc["mn"] = pool[IDOfPool].minValue;
+            } else {
+              pool[IDOfPool].maxValue = doc["ma"].as<float>();
+              pool[IDOfPool].midValue = doc["md"].as<float>();
+              pool[IDOfPool].minValue = doc["mn"].as<float>();
+              doc["ma"] = pool[IDOfPool].maxValue;
+              doc["md"] = pool[IDOfPool].midValue;
+              doc["mn"] = pool[IDOfPool].minValue;
+            }
+          }
         }
       }
-      doc["a"] = int(pool[IDOfPool].autoStatus);
-      doc["o"] = int(pool[IDOfPool].outStatus);
-      doc["i"] = int(pool[IDOfPool].inStatus);
-      pool[IDOfPool].maxValue = doc["ma"].as<float>();
-      pool[IDOfPool].midValue = doc["md"].as<float>();
-      pool[IDOfPool].minValue = doc["mn"].as<float>();
+      buffMsgFromSink = "";
       serializeJson(doc, buffMsgFromSink);
       if (!isFull(buffDataToSink)) {
         enqueueData(buffDataToSink, buffMsgFromSink.c_str());
       }
     } else {
-      // Serial.println("error read json");
+      Serial.println("error read json");
     }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
@@ -114,8 +155,8 @@ void Communication::sendToSink() {
     isSended = 1;
     trasmitState = radio.transmit(msgToSink);
     if (trasmitState == RADIOLIB_ERR_NONE) {
-      // Serial.print("send: ");
-      // Serial.println(msgToSink);
+      Serial.print("send to sink: ");
+      Serial.println(msgToSink);
       Serial.println("transmission finished!");
     } else {
       Serial.print("failed, code ");
@@ -123,5 +164,6 @@ void Communication::sendToSink() {
     }
     vTaskDelay(5 / portTICK_PERIOD_MS);
     state = radio.startReceive();
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }

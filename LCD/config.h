@@ -282,6 +282,7 @@ extern uint8_t isSettingValChange;
 extern bool isPageChangeToSettingPage;
 extern int pointerPossitionAtSettingPage;
 extern bool isChangingValueAtSettingPage;
+extern bool haveDifferentValue;
 //********** communication**********
 
 extern uint8_t IDOfPool;
@@ -289,6 +290,10 @@ extern String msgToSink;
 extern String msgFromSink;
 extern String bufferMsgFromSink;
 extern String msgToEEPROM;
+
+//***********command**************
+//GD mean getdata 
+extern String command;
 
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromSink;

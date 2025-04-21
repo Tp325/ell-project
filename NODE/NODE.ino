@@ -82,11 +82,11 @@ void vTaskReadSensor(void *pvParameters) {
     for (int i = 1; i <= numberOfPool; i++) {
       if (pool[i].autoStatus == 1) {
         if (millis() - pool[i].timeReposeDataSensorToSink >= 10000) {
-          communication.sendToSink(String("{\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0) + "}"));
+          communication.sendToSink(String("{\"is\":0,\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0) + "}"));
           pool[i].timeReposeDataSensorToSink = millis();
         }
       } else if (millis() - pool[i].timeReposeDataSensorToSink >= 60 * 1000) {
-        communication.sendToSink(String("{\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0) + "}"));
+        communication.sendToSink(String("{\"is\":0,\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0) + "}"));
         pool[i].timeReposeDataSensorToSink = millis();
       }
       vTaskDelay(10 / portTICK_PERIOD_MS);
