@@ -1,0 +1,986 @@
+[
+    {
+        "id": "a391a0f44c0ea0c9",
+        "type": "tab",
+        "label": "Lươn",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d5b6c06c70b78c42",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Bật chế độ tự động ID1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"is\":1,\"ID\":1,\"a\":1,\"ma\":4.5,\"md\":4,\"mn\":3}",
+        "payloadType": "str",
+        "x": 500,
+        "y": 380,
+        "wires": [
+            [
+                "b3dac3bb93f82845"
+            ]
+        ]
+    },
+    {
+        "id": "b3dac3bb93f82845",
+        "type": "mqtt out",
+        "z": "a391a0f44c0ea0c9",
+        "name": "",
+        "topic": "ellReceive",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "4d02509b1007ac55",
+        "x": 770,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "f78d79ed556ea86a",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 66",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "71461e0f7b5f3654",
+        "type": "mqtt in",
+        "z": "a391a0f44c0ea0c9",
+        "name": "",
+        "topic": "ellSend",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "4d02509b1007ac55",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 770,
+        "y": 540,
+        "wires": [
+            [
+                "f78d79ed556ea86a"
+            ]
+        ]
+    },
+    {
+        "id": "8233bd95bcf8185f",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 68",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "3dba10ba84f1edb1",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "function 43",
+        "func": "// Lấy dữ liệu từ msg.payload\nlet input = msg.payload;\n\n// Kiểm tra điều kiện để xác định id và status\nlet output = {\n    id: input.ID,  // Lấy giá trị ID\n    configuration: {\n        status: input.i === 1 ? \"on\" : \"off\"  // Kiểm tra giá trị của i để set status\n    }\n};\n\n// Gửi đầu ra dưới dạng msg.payload\nmsg.payload = output;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 960,
+        "wires": [
+            [
+                "8233bd95bcf8185f",
+                "b640c3193927f016"
+            ]
+        ]
+    },
+    {
+        "id": "d6b842672ff8c980",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Định ID cho bật tắt van",
+        "func": "\nlet inputData = msg.payload;\n\nif (inputData.ID == 1) {\n    inputData.ID = 1;\n}\nelse if (inputData.ID == 2) {\n    inputData.ID = 3;\n}\nelse if (inputData.ID == 3) {\n    inputData.ID = 5;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 920,
+        "wires": [
+            [
+                "3dba10ba84f1edb1",
+                "d3d0568821e22c7b"
+            ]
+        ]
+    },
+    {
+        "id": "d3d0568821e22c7b",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "function 46",
+        "func": "// Lấy dữ liệu từ msg.payload\nlet input = msg.payload;\n\n// Kiểm tra điều kiện để xác định id và status\nlet output = {\n    id: input.ID+1,  // Lấy giá trị ID\n    configuration: {\n        status: input.o === 1 ? \"on\" : \"off\"  // Kiểm tra giá trị của i để set status\n    }\n};\n\n// Gửi đầu ra dưới dạng msg.payload\nmsg.payload = output;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 920,
+        "wires": [
+            [
+                "8233bd95bcf8185f",
+                "b640c3193927f016"
+            ]
+        ]
+    },
+    {
+        "id": "45746d0bfbdffe30",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "function 47",
+        "func": "// Lấy đối tượng JSON từ msg.payload\nlet input = msg.payload;\n\n// Tạo đối tượng đầu ra theo yêu cầu\nlet output = {\n    taskingCapabilityIds: [input.ID, input.ID + 1], // Đặt ID và ID+1 vào mảng\n    automation: input.a // Đặt giá trị a vào automation\n};\n\n// Gán kết quả vào msg.payload\nmsg.payload = output;\n\n// Trả về kết quả\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 1080,
+        "wires": [
+            [
+                "645e6c43ec2680c2",
+                "b640c3193927f016"
+            ]
+        ]
+    },
+    {
+        "id": "645e6c43ec2680c2",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 70",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "1a4843cb8ee6cd93",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "function 48",
+        "func": "// Lấy đối tượng JSON từ msg.payload\nlet input = msg.payload;\n\n// Tạo đối tượng đầu ra theo yêu cầu\nlet output = {\n    taskingCapabilityIds: [input.ID, input.ID + 1], // Thay 1 bằng ID và 2 bằng ID + 1\n    autoConfig: {\n        max: input.ma + \"cm\",   // Thay max bằng ma\n        middle: input.md + \"cm\", // Thay middle bằng md\n        min: input.mn + \"cm\"     // Thay min bằng mn\n    }\n};\n\n// Gán kết quả vào msg.payload\nmsg.payload = output;\n\n// Trả về kết quả\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 1120,
+        "wires": [
+            [
+                "645e6c43ec2680c2",
+                "b640c3193927f016"
+            ]
+        ]
+    },
+    {
+        "id": "b640c3193927f016",
+        "type": "mqtt out",
+        "z": "a391a0f44c0ea0c9",
+        "name": "",
+        "topic": "actuator/controller-update ",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "4d02509b1007ac55",
+        "x": 990,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "69c03a789d27b23b",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Định ID cho mực nước",
+        "func": "\nlet inputData = msg.payload;\n\nif (inputData.ID == 1) {\n    inputData.ID = 66;\n}\nelse if (inputData.ID == 2) {\n    inputData.ID = 67;\n}\nelse if (inputData.ID == 3) {\n    inputData.ID = 68;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 1240,
+        "wires": [
+            [
+                "8bb8b5b10ce8e0f6"
+            ]
+        ]
+    },
+    {
+        "id": "8bb8b5b10ce8e0f6",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "function 51",
+        "func": "let input = msg.payload;\n// Lấy thời gian hệ thống hiện tại\nfunction getFormattedTime() {\n\n    let now = new Date();\n    return now.toISOString(); // Trả về thời gian theo định dạng ISO 8601\n\n}\n\n// Tạo đối tượng đầu ra\nlet output = {\n    sensorRecords: [\n        {\n            dataStreamId: input.ID.toString(),  // Chuyển ID thành string\n            result: input.mucn + \"cm\"           // Gán result bằng mucn và thêm đơn vị \"cm\"\n        }\n    ],\n    \"resultTime\": getFormattedTime()   // Sử dụng thời gian hệ thống\n};\n\n// Gán kết quả vào msg.payload\nmsg.payload = output;\n\n// Trả về kết quả\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1280,
+        "wires": [
+            [
+                "7205b5135e10e52c",
+                "ee2cf2e1596496ff"
+            ]
+        ]
+    },
+    {
+        "id": "7205b5135e10e52c",
+        "type": "mqtt out",
+        "z": "a391a0f44c0ea0c9",
+        "name": "",
+        "topic": "data/view",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "4d02509b1007ac55",
+        "x": 920,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "ee2cf2e1596496ff",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 71",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 1320,
+        "wires": []
+    },
+    {
+        "id": "6bb3a092c88a18e6",
+        "type": "switch",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Xử lý các trạng thái device",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "hask",
+                "v": "i",
+                "vt": "str"
+            },
+            {
+                "t": "hask",
+                "v": "a",
+                "vt": "str"
+            },
+            {
+                "t": "hask",
+                "v": "mucn",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 300,
+        "y": 1060,
+        "wires": [
+            [
+                "d6b842672ff8c980"
+            ],
+            [
+                "ad0fe6474e00278a"
+            ],
+            [
+                "69c03a789d27b23b"
+            ]
+        ]
+    },
+    {
+        "id": "7c6c82d4f0d3be26",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Bật van vào ID2",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": " {\"is\":1,\"ID\":2,\"i\":1,\"o\":1}",
+        "payloadType": "str",
+        "x": 520,
+        "y": 500,
+        "wires": [
+            [
+                "b3dac3bb93f82845"
+            ]
+        ]
+    },
+    {
+        "id": "71ae062fa7b20388",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Tắt van vào ID2",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": " {\"is\":1,\"ID\":2,\"i\":0,\"o\":0}",
+        "payloadType": "str",
+        "x": 520,
+        "y": 560,
+        "wires": [
+            [
+                "b3dac3bb93f82845"
+            ]
+        ]
+    },
+    {
+        "id": "ae9fe6b31024973a",
+        "type": "mqtt in",
+        "z": "a391a0f44c0ea0c9",
+        "name": "",
+        "topic": "actuator/controller",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "4d02509b1007ac55",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 230,
+        "y": 1920,
+        "wires": [
+            [
+                "81c708d2e4afabdb",
+                "e656bbcb712f7270",
+                "80543e046db1cf21"
+            ]
+        ]
+    },
+    {
+        "id": "8f062b69afa1f329",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Tắt chế độ tự động ID1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"is\":1,\"ID\":1,\"a\":0,\"ma\":4.5,\"md\":4,\"mn\":3}",
+        "payloadType": "str",
+        "x": 500,
+        "y": 440,
+        "wires": [
+            [
+                "b3dac3bb93f82845"
+            ]
+        ]
+    },
+    {
+        "id": "2f8515e4cb92c60a",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Setup mucnuoc ID1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"is\":1,\"ID\":1,\"ma\":3,\"md\":15,\"mn\":0}",
+        "payloadType": "str",
+        "x": 510,
+        "y": 620,
+        "wires": [
+            [
+                "b3dac3bb93f82845"
+            ]
+        ]
+    },
+    {
+        "id": "fc8bad64de778bd2",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "yêu cầu cập nhật dữ liệu",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": " {\"is\":1,\"cm\":\"GD\"}",
+        "payloadType": "str",
+        "x": 490,
+        "y": 680,
+        "wires": [
+            [
+                "b3dac3bb93f82845"
+            ]
+        ]
+    },
+    {
+        "id": "09d1a9bf37436b63",
+        "type": "mqtt in",
+        "z": "a391a0f44c0ea0c9",
+        "name": "",
+        "topic": "ellSend",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "4d02509b1007ac55",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 90,
+        "y": 1060,
+        "wires": [
+            [
+                "6bb3a092c88a18e6"
+            ]
+        ]
+    },
+    {
+        "id": "81c708d2e4afabdb",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 78",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 220,
+        "y": 1980,
+        "wires": []
+    },
+    {
+        "id": "ad0fe6474e00278a",
+        "type": "switch",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Xử lý bật tắt auto",
+        "property": "payload.a",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 610,
+        "y": 1080,
+        "wires": [
+            [
+                "45746d0bfbdffe30"
+            ],
+            [
+                "1a4843cb8ee6cd93"
+            ]
+        ]
+    },
+    {
+        "id": "8ac6630ba347ab7b",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Tắt van vào ID1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"taskingCapabilityId\":1,\"stationId\":1,\"configuration\":{\"status\":\"off\"}}",
+        "payloadType": "json",
+        "x": 560,
+        "y": 1740,
+        "wires": [
+            [
+                "e656bbcb712f7270"
+            ]
+        ]
+    },
+    {
+        "id": "e656bbcb712f7270",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Xử lý chuỗi van vào",
+        "func": "let input = msg.payload;\n\nlet taskingCapabilityId = Number(input.taskingCapabilityId); // ép kiểu về số\nlet stationId = input.stationId;\nlet status = input.configuration?.status;\n\nlet ID;\nif (taskingCapabilityId === 1 ) {\n    ID = 1;\n} else if (taskingCapabilityId === 3 ) {\n    ID = 2;\n} else if (taskingCapabilityId === 5 ) {\n    ID = 3;\n} else {\n    ID = null;\n}\n\nlet i = (status === \"on\") ? 1 : 0;\n\nmsg.payload = {\n    is: 1,\n    ID: ID,\n    i: i\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 1780,
+        "wires": [
+            [
+                "29b9d6d897e0aa9b",
+                "07ac3d41b247c81b"
+            ]
+        ]
+    },
+    {
+        "id": "29b9d6d897e0aa9b",
+        "type": "mqtt out",
+        "z": "a391a0f44c0ea0c9",
+        "name": "",
+        "topic": "ellReceive",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "4d02509b1007ac55",
+        "x": 810,
+        "y": 1780,
+        "wires": []
+    },
+    {
+        "id": "07ac3d41b247c81b",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 79",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 1820,
+        "wires": []
+    },
+    {
+        "id": "37019ab541f69e9d",
+        "type": "mqtt in",
+        "z": "a391a0f44c0ea0c9",
+        "name": "",
+        "topic": "actuator/automation",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "4d02509b1007ac55",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 1540,
+        "wires": [
+            [
+                "0acf770e30d55ff7",
+                "e4b77a43af8aee03"
+            ]
+        ]
+    },
+    {
+        "id": "0acf770e30d55ff7",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 80",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 160,
+        "y": 1600,
+        "wires": []
+    },
+    {
+        "id": "e4b77a43af8aee03",
+        "type": "switch",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Chuyển hai trạng thái tắt mở",
+        "property": "payload.autoConfig",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "null",
+                "vt": "str"
+            },
+            {
+                "t": "neq",
+                "v": "null",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 440,
+        "y": 1540,
+        "wires": [
+            [
+                "1ef1af171673810a"
+            ],
+            [
+                "f5027e96795ab4bd"
+            ]
+        ]
+    },
+    {
+        "id": "1ef1af171673810a",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Xử lý chuỗi tắt",
+        "func": "let input = msg.payload;\n    msg.payload = {\n        is: 1,\n        a: input.automation\n    };\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 1500,
+        "wires": [
+            [
+                "c67f944ee10b16d4",
+                "554f27018f0ddfd1"
+            ]
+        ]
+    },
+    {
+        "id": "f5027e96795ab4bd",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Xử lý chuỗi mở",
+        "func": "let input = msg.payload;\n\nlet taskingCapabilityIds = input.taskingCapabilityIds || [];\nlet automation = input.automation;\nlet autoConfig = input.autoConfig || {};\n\n// Xử lý ID từ taskingCapabilityIds\nlet ID = null;\nif (taskingCapabilityIds.includes(1) || taskingCapabilityIds.includes(2)) {\n    ID = 1;\n} else if (taskingCapabilityIds.includes(3) || taskingCapabilityIds.includes(4)) {\n    ID = 2;\n} else if (taskingCapabilityIds.includes(5) || taskingCapabilityIds.includes(6)) {\n    ID = 3;\n}\n\n// Hàm xử lý tự động: nếu là chuỗi có \"cm\" thì bóc số, nếu là số thì lấy luôn\nfunction parseAutoValue(value) {\n    if (typeof value === \"string\" && value.includes(\"cm\")) {\n        return parseFloat(value.replace(\"cm\", \"\").trim());\n    }\n    return Number(value) || 0;\n}\n\n// Lấy giá trị từ autoConfig\nlet ma = parseAutoValue(autoConfig.max);\nlet md = parseAutoValue(autoConfig.middle);\nlet mn = parseAutoValue(autoConfig.min);\n\n// Tạo output\nmsg.payload = {\n    is: 1,\n    ID: ID,\n    a: automation,\n    ma: ma,\n    md: md,\n    mn: mn\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 1600,
+        "wires": [
+            [
+                "6c579ab6762d8538",
+                "554f27018f0ddfd1"
+            ]
+        ]
+    },
+    {
+        "id": "80543e046db1cf21",
+        "type": "function",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Xử lý chuỗi van ra",
+        "func": "let input = msg.payload;\n\nlet taskingCapabilityId = Number(input.taskingCapabilityId); // ép kiểu về số\nlet stationId = input.stationId;\nlet status = input.configuration?.status;\n\nlet ID;\nif (taskingCapabilityId === 2) {\n    ID = 1;\n} else if (taskingCapabilityId === 4 ) {\n    ID = 2;\n} else if (taskingCapabilityId === 6 ) {\n    ID = 3;\n} else {\n    ID = null;\n}\n\nlet o = (status === \"on\") ? 1 : 0;\n\nmsg.payload = {\n    is: 1,\n    ID: ID,\n    o: o\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 1920,
+        "wires": [
+            [
+                "44cbcdc2dc65e46b",
+                "29b9d6d897e0aa9b"
+            ]
+        ]
+    },
+    {
+        "id": "44cbcdc2dc65e46b",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 81",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 1960,
+        "wires": []
+    },
+    {
+        "id": "5d7926d7e9e3fc97",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Tắt van ra ID1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"taskingCapabilityId\":2,\"stationId\":1,\"configuration\":{\"status\":\"off\"}}",
+        "payloadType": "json",
+        "x": 570,
+        "y": 1880,
+        "wires": [
+            [
+                "80543e046db1cf21"
+            ]
+        ]
+    },
+    {
+        "id": "c67f944ee10b16d4",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 82",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 1540,
+        "wires": []
+    },
+    {
+        "id": "6c579ab6762d8538",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 83",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 1640,
+        "wires": []
+    },
+    {
+        "id": "7a37db992deeef43",
+        "type": "debug",
+        "z": "a391a0f44c0ea0c9",
+        "name": "debug 84",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 1600,
+        "wires": []
+    },
+    {
+        "id": "fe8b0a9f0a536974",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Tắt auto ID 1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"taskingCapabilityIds\":[1,2],\"stationId\":null,\"automation\":0,\"autoConfig\":null}",
+        "payloadType": "json",
+        "x": 490,
+        "y": 1480,
+        "wires": [
+            [
+                "e4b77a43af8aee03",
+                "7a37db992deeef43"
+            ]
+        ]
+    },
+    {
+        "id": "ae6a41b5c3fa9407",
+        "type": "inject",
+        "z": "a391a0f44c0ea0c9",
+        "name": "Bật auto ID1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"taskingCapabilityIds\":[1,2],\"stationId\":null,\"automation\":1,\"autoConfig\":{\"middle\":\"50\",\"min\":\"0\",\"max\":\"100\"}}",
+        "payloadType": "json",
+        "x": 490,
+        "y": 1440,
+        "wires": [
+            [
+                "e4b77a43af8aee03",
+                "7a37db992deeef43"
+            ]
+        ]
+    },
+    {
+        "id": "554f27018f0ddfd1",
+        "type": "mqtt out",
+        "z": "a391a0f44c0ea0c9",
+        "name": "",
+        "topic": "ellReceive",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "4d02509b1007ac55",
+        "x": 1010,
+        "y": 1500,
+        "wires": []
+    },
+    {
+        "id": "4d02509b1007ac55",
+        "type": "mqtt-broker",
+        "name": "iotlab",
+        "broker": "103.221.220.183",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
