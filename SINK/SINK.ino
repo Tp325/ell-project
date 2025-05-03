@@ -13,10 +13,20 @@ void setup() {
   xTaskCreate(vtaskReceiveFromServer, "taskReceiveFromServer", 10000, NULL, 5, NULL);
   xTaskCreate(vtaskProcessWiFi, "taskProcessWiFi", 10000, NULL, 5, NULL);
   xTaskCreate(vtaskProcessMQTT, "taskProcessMQTT", 10000, NULL, 5, NULL);
+  xTaskCreate(vtaskSynchronize, "taskSynchronize", 5000, NULL, 5, NULL);
   vTaskDelete(NULL);
 }
 
 void loop() {
+}
+void vtaskSynchronize(void *pvParameters) {
+  while (1) {
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    if (!isFull(buffDataFromDisplay)) {
+      enqueueData(buffDataFromDisplay, String("{\"is\":1,\"cm\":\"GD\"}").c_str());
+    }
+    vTaskDelete(NULL);
+  }
 }
 void vtaskSendToNode(void *pvParameters) {
   while (1) {
@@ -43,6 +53,10 @@ void vtaskSendToDisplay(void *pvParameters) {
   }
 }
 void vtaskReceiveFromServer(void *pvParameters) {
+  vTaskDelay(5000 / portTICK_PERIOD_MS);
+  if (!isFull(buffDataFromDisplay)) {
+    enqueueData(buffDataFromDisplay, String("{\"is\":1,\"cm\":\"GD\"}").c_str());
+  }
   while (1) {
     communication.receiveFromServer();
     vTaskDelay(20 / portTICK_PERIOD_MS);

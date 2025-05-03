@@ -97,53 +97,46 @@ void Communication::analizeData() {
     }
     if (doc1.containsKey("mucn")) {
       pool[IDOfPool].mucnuoc = doc1["mucn"].as<float>();
-    } else {
-      if (doc1["is"].as<int>() == 0) {
-        if (doc1.containsKey("i")) {
-          pool[IDOfPool].inStatus = doc1["i"].as<uint8_t>();
-          pool[IDOfPool].outStatus = doc1["o"].as<uint8_t>();
-        } else {
-          pool[IDOfPool].autoStatus = doc1["a"].as<uint8_t>();
-          pool[IDOfPool].inStatus = 0;
-          pool[IDOfPool].outStatus = 0;
+    }
+    if (doc1["is"].as<int>() == 0) {
+      if (doc1.containsKey("i")) {
+        pool[IDOfPool].inStatus = doc1["i"].as<uint8_t>();
+      }
+      if (doc1.containsKey("o")) {
+        pool[IDOfPool].outStatus = doc1["o"].as<uint8_t>();
+      }
+      if (doc1.containsKey("a")) {
+        pool[IDOfPool].autoStatus = doc1["a"].as<uint8_t>();
+        pool[IDOfPool].inStatus = 0;
+        pool[IDOfPool].outStatus = 0;
+      }
+    } else if (doc1["is"].as<int>() == 1) {
+      if (doc1.containsKey("cm")) {
+        command = doc1["cm"].as<String>();
+      }
+      if (doc1.containsKey("i")) {
+        pool[IDOfPool].inStatus = doc1["i"].as<uint8_t>();
+      }
+      if (doc1.containsKey("o")) {
+        pool[IDOfPool].outStatus = doc1["o"].as<uint8_t>();
+      }
+      if (doc1.containsKey("a")) {
+        pool[IDOfPool].inStatus = 0;
+        pool[IDOfPool].outStatus = 0;
+        pool[IDOfPool].autoStatus = doc1["a"].as<uint8_t>();
+      }
+      if (doc1.containsKey("ma")) {
+        if (pool[IDOfPool].maxValue != doc1["ma"].as<float>()) {
+          pool[IDOfPool].maxValue = doc1["ma"].as<float>();
+          haveDifferentValue = 1;
         }
-      } else if (doc1["is"].as<int>() == 1) {
-        if (doc1.containsKey("cm")) {
-          command = doc1["cm"].as<String>();
-        } else {
-          if (doc1.containsKey("i")) {
-            pool[IDOfPool].inStatus = doc1["i"].as<uint8_t>();
-            pool[IDOfPool].outStatus = doc1["o"].as<uint8_t>();
-          } else if (doc1.containsKey("a")) {
-            pool[IDOfPool].inStatus = 0;
-            pool[IDOfPool].outStatus = 0;
-            pool[IDOfPool].autoStatus = doc1["a"].as<uint8_t>();
-            if (pool[IDOfPool].maxValue != doc1["ma"].as<float>()) {
-              pool[IDOfPool].maxValue = doc1["ma"].as<float>();
-              haveDifferentValue = 1;
-            }
-            if (pool[IDOfPool].midValue != doc1["md"].as<float>()) {
-              pool[IDOfPool].midValue = doc1["md"].as<float>();
-              haveDifferentValue = 1;
-            }
-            if (pool[IDOfPool].minValue != doc1["mn"].as<float>()) {
-              pool[IDOfPool].minValue = doc1["mn"].as<float>();
-              haveDifferentValue = 1;
-            }
-          } else {
-            if (pool[IDOfPool].maxValue != doc1["ma"].as<float>()) {
-              pool[IDOfPool].maxValue = doc1["ma"].as<float>();
-              haveDifferentValue = 1;
-            }
-            if (pool[IDOfPool].midValue != doc1["md"].as<float>()) {
-              pool[IDOfPool].midValue = doc1["md"].as<float>();
-              haveDifferentValue = 1;
-            }
-            if (pool[IDOfPool].minValue != doc1["mn"].as<float>()) {
-              pool[IDOfPool].minValue = doc1["mn"].as<float>();
-              haveDifferentValue = 1;
-            }
-          }
+        if (pool[IDOfPool].midValue != doc1["md"].as<float>()) {
+          pool[IDOfPool].midValue = doc1["md"].as<float>();
+          haveDifferentValue = 1;
+        }
+        if (pool[IDOfPool].minValue != doc1["mn"].as<float>()) {
+          pool[IDOfPool].minValue = doc1["mn"].as<float>();
+          haveDifferentValue = 1;
         }
       }
     }
