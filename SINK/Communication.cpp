@@ -19,6 +19,20 @@ void setReceiveFlag() {
 }
 Communication::Communication() {
 }
+void onWiFiEvent(WiFiEvent_t event) {
+  switch (event) {
+    case ARDUINO_EVENT_WIFI_STA_GOT_IP:
+      Serial.println("[WiFiEvent] Connected to WiFi!");
+      isWifiConnect = 1;
+      break;
+    case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
+      Serial.println("[WiFiEvent] WiFi lost, reconnecting");
+      isWifiConnect = 0;
+      break;
+    default:
+      break;
+  }
+}
 void Communication::begin() {
   spiLoRa.begin(14, 12, 13, Nss);
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
@@ -32,7 +46,8 @@ void Communication::begin() {
   } else {
     Serial.print("failed, code ");
     Serial.println(state);
-    while (true) { vTaskDelay(100 / portTICK_PERIOD_MS); }
+    delay(1000);
+    ESP.restart();
   }
   radio.setPacketReceivedAction(setReceiveFlag);
   Serial.print(F("[SX1278] Starting to listen ... "));
@@ -42,17 +57,22 @@ void Communication::begin() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true) { delay(10); }
+    delay(1000);
+    ESP.restart();
   }
+  WiFi.onEvent(onWiFiEvent);
   WiFi.mode(WIFI_STA);
+  client.setServer(mqtt_server, mqtt_port);
+  client.setCallback(callbackWrapper);
   wm.setConfigPortalBlocking(false);
+  wm.setDarkMode(true);
+  isWebAPStart = 1;
   if (wm.autoConnect("EllPoolWiFi")) {
-    Serial.println("connected...yeey :)");
+    Serial.println("WIFI connected");
   } else {
-    Serial.println("Configportal running");
+    Serial.println("Web AP running");
   }
 }
-
 void Communication::receiveFromDisplay() {
   if (Serial2.available()) {
     msgFromDisplay = Serial2.readStringUntil('\n');
@@ -87,15 +107,23 @@ void Communication::receiveFromNode() {
     receiveFlag = false;
     state = radio.readData(msgFromNode);
     if (state == RADIOLIB_ERR_NONE) {
-      if (!isFull(buffDataFromNode)) {
-        Serial.print("receive From Node: ");
-        Serial.println(msgFromNode);
-        enqueueData(buffDataFromNode, msgFromNode.c_str());
+      doc.clear();
+      deserializeJson(doc, msgFromNode);
+      if (doc.containsKey("SID")) {
+        if (doc["SID"].as<String>() == StationID) {
+          if (!isFull(buffDataFromNode)) {
+            Serial.print("receive From Node: ");
+            Serial.println(msgFromNode);
+            enqueueData(buffDataFromNode, msgFromNode.c_str());
+          }
+          if (!isFull(buffDataToServer)) {
+            enqueueData(buffDataToServer, msgFromNode.c_str());
+          }
+          msgFromNode = "";
+        } else {
+          msgFromNode = "";
+        }
       }
-      if (!isFull(buffDataToServer)) {
-        enqueueData(buffDataToServer, msgFromNode.c_str());
-      }
-      msgFromNode = "";
     }
   }
 }
@@ -132,37 +160,42 @@ void Communication::receiveFromServer() {
 
 void Communication::processWiFi() {
   wm.process();
-  if (WiFi.status() == WL_CONNECTED) {
-    if (isWifiConnect == 0) {
-      client.setServer(mqtt_server, mqtt_port);
-      client.setCallback(callbackWrapper);
-      connectMqtt();
-      isWifiConnect = 1;
-    }
-  } else {
-    isWifiConnect = 0;
+  if (isWifiConnect == 1) {
+    isWebAPStart = 0;
   }
 }
-void Communication::connectMqtt() {
-  while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    if (client.connect("EllPool", mqtt_user, mqtt_pass)) {
-      Serial.println("connected");
-      client.subscribe(topicReceive.c_str());
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
+void Communication::reconnectWifi() {
+  if (millis() - timeOutReconnectWiFi > 20000 && isWifiConnect == 0) {
+    timeOutReconnectWiFi = millis();
+    if (isWebAPStart == 0) {
+      Serial.print("wait");
+      WiFi.disconnect();
+      WiFi.reconnect();
     }
-    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }
 void Communication::processMQTT() {
-  if (!client.connected()) {
-    connectMqtt();
+  if (isWifiConnect == 1 && client.connected()) {
+    client.loop();
   }
-  client.loop();
 }
-
+void Communication::reconnectMQTT() {
+  if (isWifiConnect == 1 && !client.connected()) {
+    connectMqttWithTimeOut();
+  }
+}
+void Communication::connectMqttWithTimeOut() {
+  if (millis() - timeOutReconnectMQTT > 2000) {
+    timeOutReconnectMQTT = millis();
+    Serial.println("Attempting MQTT connection...");
+    if (client.connect("EllPool", mqtt_user, mqtt_pass)) {
+      Serial.println("connected");
+      client.subscribe(topicReceive.c_str());
+    }
+  } else {
+    Serial.println("reconnect MQTT...");
+  }
+}
 
 void Communication::callbackmqtt(char* topic, byte* message, unsigned int length) {
   msgFromServer = "";

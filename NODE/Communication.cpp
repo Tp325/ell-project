@@ -55,85 +55,86 @@ void Communication::analizeData() {
   while (!isEmpty(buffDataFromSink)) {
     doc.clear();
     buffMsgFromSink = dequeue(buffDataFromSink);
-    DeserializationError error = deserializeJson(doc, buffMsgFromSink);
-    if (!error) {
-      if (doc.containsKey("ID")) {
-        IDOfPool = doc["ID"].as<int>();
-        pool[IDOfPool].poolID = IDOfPool;
-      }
-      if (doc["is"].as<int>() == 0) {
-        if (doc.containsKey("mucn")) {
+    deserializeJson(doc, buffMsgFromSink);
+    if (doc.containsKey("SID")) {
+      if (doc["SID"].as<String>() == StationID) {
+        if (doc.containsKey("ID")) {
+          IDOfPool = doc["ID"].as<int>();
+          pool[IDOfPool].poolID = IDOfPool;
         }
-        if (doc.containsKey("a")) {
-          if (doc["a"].as<int>() == 3 || doc["a"].as<int>() == 2) {
-            pool[IDOfPool].outStatus = false;
-            pool[IDOfPool].inStatus = false;
-            pool[IDOfPool].autoStatus = bool(doc["a"].as<int>() - 2);
+        if (doc["is"].as<int>() == 0) {
+          if (doc.containsKey("mucn")) {
+          }
+          if (doc.containsKey("a")) {
+            if (doc["a"].as<int>() == 3 || doc["a"].as<int>() == 2) {
+              pool[IDOfPool].outStatus = false;
+              pool[IDOfPool].inStatus = false;
+              pool[IDOfPool].autoStatus = bool(doc["a"].as<int>() - 2);
+              pool[IDOfPool].maxValue = doc["ma"].as<float>();
+              pool[IDOfPool].midValue = doc["md"].as<float>();
+              pool[IDOfPool].minValue = doc["mn"].as<float>();
+              if (pool[IDOfPool].autoStatus == 0) {
+                pool[IDOfPool].stepOfAuto = 0;
+                pool[IDOfPool].isDoneAutoMode = 0;
+              }
+              doc["a"] = int(pool[IDOfPool].autoStatus);
+            }
+          }
+          if (doc.containsKey("ma")) {
             pool[IDOfPool].maxValue = doc["ma"].as<float>();
             pool[IDOfPool].midValue = doc["md"].as<float>();
             pool[IDOfPool].minValue = doc["mn"].as<float>();
-            if (pool[IDOfPool].autoStatus == 0) {
+          }
+          if (doc.containsKey("i")) {
+            if (doc["i"].as<int>() == 3 || doc["i"].as<int>() == 2) {
+              pool[IDOfPool].inStatus = bool(doc["i"].as<int>() - 2);
+            }
+            doc["i"] = int(pool[IDOfPool].inStatus);
+          }
+          if (doc.containsKey("o")) {
+            if (doc["o"].as<int>() == 3 || doc["o"].as<int>() == 2) {
+              pool[IDOfPool].outStatus = bool(doc["o"].as<int>() - 2);
+            }
+            doc["o"] = int(pool[IDOfPool].outStatus);
+          }
+        } else if (doc["is"].as<int>() == 1) {
+          if (doc.containsKey("cm")) {
+            
+          }
+          if (doc.containsKey("i")) {
+            pool[IDOfPool].inStatus = bool(doc["i"].as<int>());
+            doc["i"] = int(pool[IDOfPool].inStatus);
+          }
+          if (doc.containsKey("o")) {
+            pool[IDOfPool].outStatus = bool(doc["o"].as<int>());
+            doc["o"] = int(pool[IDOfPool].outStatus);
+          }
+          if (doc.containsKey("a")) {
+            if (doc["a"].as<int>() == 1) {
+              pool[IDOfPool].outStatus = 0;
+              pool[IDOfPool].inStatus = 0;
+            } else if (doc["a"].as<int>() == 0) {
               pool[IDOfPool].stepOfAuto = 0;
               pool[IDOfPool].isDoneAutoMode = 0;
             }
+            pool[IDOfPool].autoStatus = bool(doc["a"].as<int>());
             doc["a"] = int(pool[IDOfPool].autoStatus);
           }
-        }
-        if (doc.containsKey("ma")) {
-          pool[IDOfPool].maxValue = doc["ma"].as<float>();
-          pool[IDOfPool].midValue = doc["md"].as<float>();
-          pool[IDOfPool].minValue = doc["mn"].as<float>();
-        }
-        if (doc.containsKey("i")) {
-          if (doc["i"].as<int>() == 3 || doc["i"].as<int>() == 2) {
-            pool[IDOfPool].inStatus = bool(doc["i"].as<int>() - 2);
+          if (doc.containsKey("ma")) {
+            pool[IDOfPool].maxValue = doc["ma"].as<float>();
+            pool[IDOfPool].midValue = doc["md"].as<float>();
+            pool[IDOfPool].minValue = doc["mn"].as<float>();
+            doc["ma"] = pool[IDOfPool].maxValue;
+            doc["md"] = pool[IDOfPool].midValue;
+            doc["mn"] = pool[IDOfPool].minValue;
           }
-          doc["i"] = int(pool[IDOfPool].inStatus);
         }
-        if (doc.containsKey("o")) {
-          if (doc["o"].as<int>() == 3 || doc["o"].as<int>() == 2) {
-            pool[IDOfPool].outStatus = bool(doc["o"].as<int>() - 2);
-          }
-          doc["o"] = int(pool[IDOfPool].outStatus);
-        }
-      } else if (doc["is"].as<int>() == 1) {
-        if (doc.containsKey("cm")) {
-        }
-        if (doc.containsKey("i")) {
-          pool[IDOfPool].inStatus = bool(doc["i"].as<int>());
-          doc["i"] = int(pool[IDOfPool].inStatus);
-        }
-        if (doc.containsKey("o")) {
-          pool[IDOfPool].outStatus = bool(doc["o"].as<int>());
-          doc["o"] = int(pool[IDOfPool].outStatus);
-        }
-        if (doc.containsKey("a")) {
-          if (doc["a"].as<int>() == 1) {
-            pool[IDOfPool].outStatus = 0;
-            pool[IDOfPool].inStatus = 0;
-          } else if (doc["a"].as<int>() == 0) {
-            pool[IDOfPool].stepOfAuto = 0;
-            pool[IDOfPool].isDoneAutoMode = 0;
-          }
-          pool[IDOfPool].autoStatus = bool(doc["a"].as<int>());
-          doc["a"] = int(pool[IDOfPool].autoStatus);
-        }
-        if (doc.containsKey("ma")) {
-          pool[IDOfPool].maxValue = doc["ma"].as<float>();
-          pool[IDOfPool].midValue = doc["md"].as<float>();
-          pool[IDOfPool].minValue = doc["mn"].as<float>();
-          doc["ma"] = pool[IDOfPool].maxValue;
-          doc["md"] = pool[IDOfPool].midValue;
-          doc["mn"] = pool[IDOfPool].minValue;
+        buffMsgFromSink = "";
+        serializeJson(doc, buffMsgFromSink);
+        if (!isFull(buffDataToSink)) {
+          enqueueData(buffDataToSink, buffMsgFromSink.c_str());
         }
       }
-      buffMsgFromSink = "";
-      serializeJson(doc, buffMsgFromSink);
-      if (!isFull(buffDataToSink)) {
-        enqueueData(buffDataToSink, buffMsgFromSink.c_str());
-      }
-    } else {
-      Serial.println("error read json");
     }
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }

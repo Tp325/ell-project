@@ -23,13 +23,15 @@ extern int state;
 extern int trasmitState;
 class Communication {
 private:
-  void connectMqtt();
+  void connectMqttWithTimeOut();
   void callbackmqtt(char* topic, byte* message, unsigned int length);
   static Communication* instance;
   static void callbackWrapper(char* topic, byte* payload, unsigned int length) {
     instance->callbackmqtt(topic, payload, length);
   }
-
+  unsigned long timeOutReconnectMQTT = 0;
+  unsigned long timeOutReconnectWiFi = 0;
+  bool isWebAPStart = 0;
 public:
   Communication();
   void begin();
@@ -40,6 +42,8 @@ public:
   void sendToServer();
   void sendToDisplay();
   void processWiFi();
+  void reconnectWifi();
   void processMQTT();
+  void reconnectMQTT();
 };
 #endif

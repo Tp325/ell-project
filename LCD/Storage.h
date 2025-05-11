@@ -8,6 +8,10 @@ private:
   float buffReadData;
   int IDOfPool;
   bool hasData = false;
+  bool needCommit = false;
+  float maxValueInEEPROM;
+  float midValueInEEPROM;
+  float minValueInEEPROM;
 public:
   Storage();
   void begin();
