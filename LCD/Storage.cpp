@@ -4,9 +4,9 @@ void Storage::begin() {
   EEPROM.begin((numberOfPool * 12) + 16);
   vTaskDelay(200 / portTICK_PERIOD_MS);
   for (int i = 1; i <= numberOfPool; i++) {
-    pool[i].maxValue = readFromEEPROM(pool[i].adrressOfSavedDataInEEPROM);
-    pool[i].midValue = readFromEEPROM(pool[i].adrressOfSavedDataInEEPROM + sizeof(float));
-    pool[i].minValue = readFromEEPROM(pool[i].adrressOfSavedDataInEEPROM + (2 * sizeof(float)));
+    pool[i].maxValue = readFromEEPROM(pool[i].addressOfSavedDataInEEPROM);
+    pool[i].midValue = readFromEEPROM(pool[i].addressOfSavedDataInEEPROM + sizeof(float));
+    pool[i].minValue = readFromEEPROM(pool[i].addressOfSavedDataInEEPROM + (2 * sizeof(float)));
     if (isnan(pool[i].maxValue))
       pool[i].maxValue = 0.0;
     if (isnan(pool[i].midValue))
@@ -19,13 +19,27 @@ void Storage::saveToEEPROM() {
   while (!isEmpty(buffDataToEEPROM)) {
     IDOfPool = atoi(dequeue(buffDataToEEPROM));
     if (IDOfPool > 0 && IDOfPool <= numberOfPool) {
-      EEPROM.put(pool[IDOfPool].adrressOfSavedDataInEEPROM, pool[IDOfPool].maxValue);
-      EEPROM.put(pool[IDOfPool].adrressOfSavedDataInEEPROM + sizeof(float), pool[IDOfPool].midValue);
-      EEPROM.put(pool[IDOfPool].adrressOfSavedDataInEEPROM + (2 * sizeof(float)), pool[IDOfPool].minValue);
-      EEPROM.commit();
+      maxValueInEEPROM = readFromEEPROM(pool[IDOfPool].addressOfSavedDataInEEPROM);
+      midValueInEEPROM = readFromEEPROM(pool[IDOfPool].addressOfSavedDataInEEPROM + sizeof(float));
+      minValueInEEPROM = readFromEEPROM(pool[IDOfPool].addressOfSavedDataInEEPROM + 2 * sizeof(float));
+      if (fabs(maxValueInEEPROM - pool[IDOfPool].maxValue) < 0.1) {
+        EEPROM.put(pool[IDOfPool].addressOfSavedDataInEEPROM, pool[IDOfPool].maxValue);
+        needCommit = true;
+      }
+      if (fabs(midValueInEEPROM - pool[IDOfPool].midValue) < 0.1) {
+        EEPROM.put(pool[IDOfPool].addressOfSavedDataInEEPROM + sizeof(float), pool[IDOfPool].midValue);
+        needCommit = true;
+      }
+      if (fabs(minValueInEEPROM - pool[IDOfPool].minValue) < 0.1) {
+        EEPROM.put(pool[IDOfPool].addressOfSavedDataInEEPROM + (2 * sizeof(float)), pool[IDOfPool].minValue);
+        needCommit = true;
+      }
+      if (needCommit) {
+        EEPROM.commit();
+        needCommit = false;
+      }
     }
   }
-
 }
 float Storage::readFromEEPROM(int adrress) {
   EEPROM.get(adrress, buffReadData);

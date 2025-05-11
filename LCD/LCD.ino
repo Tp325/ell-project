@@ -13,14 +13,14 @@ void setup() {
   screen.begin();
   storage.begin();
   delay(1000);
-  xTaskCreatePinnedToCore(vtaskButton, "taskButton", 20000, NULL, 5, NULL, 0);
-  xTaskCreate(vtaskDisplay, "taskDisplay", 20000, NULL, 5, NULL);
-  xTaskCreate(vtaskSensorDetect, "taskSensorDetect", 4096, NULL, 5, NULL);
-  xTaskCreate(vtaskSendToSink, "taskSendToSink", 20000, NULL, 5, NULL);
-  xTaskCreate(vtaskReceiveFromSink, "taskReceiveFromSink", 20000, NULL, 5, NULL);
-  xTaskCreate(vTaskAnalize, "TaskAnalize", 20000, NULL, 5, NULL);
-  xTaskCreate(vtaskAnalizeDataToSink, "taskAnalizeDataToSink", 20000, NULL, 5, NULL);
-  xTaskCreate(vtaskSaveToEEPROM, "taskSaveToEEPROM", 20000, NULL, 5, NULL);
+  xTaskCreatePinnedToCore(vtaskButton, "taskButton", 4096, NULL, 5, NULL, 0);
+  xTaskCreate(vtaskDisplay, "taskDisplay", 8192, NULL, 5, NULL);
+  xTaskCreate(vtaskSensorDetect, "taskSensorDetect", 2048, NULL, 5, NULL);
+  xTaskCreate(vtaskSendToSink, "taskSendToSink", 2048, NULL, 5, NULL);
+  xTaskCreate(vtaskReceiveFromSink, "taskReceiveFromSink", 2048, NULL, 5, NULL);
+  xTaskCreate(vTaskAnalize, "TaskAnalize", 2048, NULL, 5, NULL);
+  xTaskCreate(vtaskAnalizeDataToSink, "taskAnalizeDataToSink", 2048, NULL, 5, NULL);
+  xTaskCreate(vtaskSaveToEEPROM, "taskSaveToEEPROM", 2048, NULL, 5, NULL);
   vTaskDelete(NULL);
 }
 void loop() {

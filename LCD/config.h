@@ -255,6 +255,9 @@ const uint8_t logo[2560] PROGMEM = {
 #define autoButton 35     // Tự động - thủ công
 #define LED_LCD 12
 #define SS_DETECT 15
+
+extern String StationID ;
+
 //*********************** quản lý hồ****************
 extern int numberOfPool;
 struct Pool {
@@ -266,7 +269,7 @@ struct Pool {
   float maxValue;
   float midValue;
   float minValue;
-  int adrressOfSavedDataInEEPROM;
+  int addressOfSavedDataInEEPROM;
 };
 extern Pool pool[10];
 extern void creatNewPool(int numberPool);
@@ -292,7 +295,7 @@ extern String bufferMsgFromSink;
 extern String msgToEEPROM;
 
 //***********command**************
-//GD mean getdata 
+//GD mean getdata
 extern String command;
 
 //************* CircularQueue*****************

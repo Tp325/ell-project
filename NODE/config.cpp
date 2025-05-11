@@ -1,5 +1,8 @@
 #include "config.h"
 
+String StationID = "TESTH6CT";
+
+
 //*********************** quản lý hồ****************
 Pool pool[10];
 int numberOfPool = 0;

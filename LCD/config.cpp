@@ -1,6 +1,9 @@
 #include "config.h"
 int gpioPins[8] = { 19, 21, 3, 26, 1, 27, 22, 23 };
 
+String StationID = "TESTH6CT";
+
+
 //*********************** quản lý hồ****************
 Pool pool[10];
 void creatNewPool(int numberPool) {
@@ -14,7 +17,7 @@ void creatNewPool(int numberPool) {
     pool[i].inStatus = 0;
     pool[i].outStatus = 0;
     pool[i].autoStatus = 0;
-    pool[i].adrressOfSavedDataInEEPROM = 12 * i - 11;
+    pool[i].addressOfSavedDataInEEPROM = 12 * i - 11;
   }
 }
 int numberOfPool = 0;
@@ -44,6 +47,6 @@ String msgToEEPROM;
 
 
 //**************CircularQueue************
-CircularQueue *buffDataFromSink = createQueue(100);
-CircularQueue *buffDataToSink = createQueue(100);
-CircularQueue *buffDataToEEPROM = createQueue(100);
+CircularQueue *buffDataFromSink = createQueue(50);
+CircularQueue *buffDataToSink = createQueue(50);
+CircularQueue *buffDataToEEPROM = createQueue(50);

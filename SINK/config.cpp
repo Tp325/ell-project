@@ -1,5 +1,10 @@
 #include "config.h"
 
+
+String StationID = "TESTH6CT";
+
+
+
 //*********************** quản lý hồ****************
 Pool pool[10];
 int numberOfPool = 0;
@@ -31,7 +36,7 @@ String topicSend = "ellSend";
 
 
 //**************CircularQueue************
-CircularQueue *buffDataFromDisplay = createQueue(80);
-CircularQueue *buffDataFromNode = createQueue(80);
-CircularQueue *buffDataFromServer = createQueue(30);
-CircularQueue *buffDataToServer = createQueue(80);
+CircularQueue *buffDataFromDisplay = createQueue(40);
+CircularQueue *buffDataFromNode = createQueue(40);
+CircularQueue *buffDataFromServer = createQueue(40);
+CircularQueue *buffDataToServer = createQueue(40);

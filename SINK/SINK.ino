@@ -5,28 +5,27 @@ Communication communication;
 void setup() {
   Serial.begin(9600);
   communication.begin();
-  xTaskCreate(vtaskSendToNode, "taskSendToNode", 10000, NULL, 5, NULL);
-  xTaskCreate(vtaskReciveFromDisplay, "taskReciveFromDisplay", 10000, NULL, 5, NULL);
-  xTaskCreate(vtaskReceiveFromNode, "taskReceiveFromNode", 10000, NULL, 5, NULL);
-  xTaskCreate(vtaskSendToDisplay, "taskSendToDisplay", 10000, NULL, 5, NULL);
-  xTaskCreate(vtaskSendToServer, "taskSendToServer", 10000, NULL, 5, NULL);
-  xTaskCreate(vtaskReceiveFromServer, "taskReceiveFromServer", 10000, NULL, 5, NULL);
-  xTaskCreate(vtaskProcessWiFi, "taskProcessWiFi", 10000, NULL, 5, NULL);
-  xTaskCreate(vtaskProcessMQTT, "taskProcessMQTT", 10000, NULL, 5, NULL);
-  xTaskCreate(vtaskSynchronize, "taskSynchronize", 5000, NULL, 5, NULL);
+  xTaskCreatePinnedToCore(vtaskSendToNode, "taskSendToNode", 4096, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vtaskReceiveFromNode, "taskReceiveFromNode", 4096, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vtaskReciveFromDisplay, "taskReciveFromDisplay", 4096, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vtaskSendToDisplay, "taskSendToDisplay", 4096, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vtaskSendToServer, "taskSendToServer", 4096, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vtaskReceiveFromServer, "taskReceiveFromServer", 4096, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vtaskProcessWiFi, "taskProcessWiFi", 4096, NULL, 5, NULL, 0);
+  xTaskCreatePinnedToCore(vtaskProcessMQTT, "taskProcessMQTT", 4096, NULL, 5, NULL, 0);
+  xTaskCreatePinnedToCore(vtaskSynchronize, "taskSynchronize", 4096, NULL, 5, NULL, 0);
+  xTaskCreatePinnedToCore(vtaskBlocking, "taskBlocking", 4096, NULL, 5, NULL, 0);
   vTaskDelete(NULL);
 }
 
 void loop() {
 }
 void vtaskSynchronize(void *pvParameters) {
-  while (1) {
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
-    if (!isFull(buffDataFromDisplay)) {
-      enqueueData(buffDataFromDisplay, String("{\"is\":1,\"cm\":\"GD\"}").c_str());
-    }
-    vTaskDelete(NULL);
+  vTaskDelay(5000 / portTICK_PERIOD_MS);
+  if (!isFull(buffDataFromDisplay)) {
+    enqueueData(buffDataFromDisplay, String("{\"is\":1,\"SID\":\"" + String(StationID) + "\",\"cm\":\"GD\"}").c_str());
   }
+  vTaskDelete(NULL);
 }
 void vtaskSendToNode(void *pvParameters) {
   while (1) {
@@ -71,12 +70,20 @@ void vtaskSendToServer(void *pvParameters) {
 void vtaskProcessWiFi(void *pvParameters) {
   while (1) {
     communication.processWiFi();
-    vTaskDelay(20 / portTICK_PERIOD_MS);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
   }
 }
 void vtaskProcessMQTT(void *pvParameters) {
   while (1) {
     communication.processMQTT();
-    vTaskDelay(20 / portTICK_PERIOD_MS);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+  }
+}
+void vtaskBlocking(void *pvParameters) {
+  while (1) {
+    // reconnect wifi && mqtt reconnnect
+    communication.reconnectWifi();
+    communication.reconnectMQTT();
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
   }
 }

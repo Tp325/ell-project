@@ -31,22 +31,25 @@ void Execution::autoRun(int poolID) {
   // Serial.println(pool[poolID].stepOfAuto);
   // Serial.println(pool[poolID].mucnuoc);
   if (pool[poolID].stepOfAuto == 0) {
-    if (pool[poolID].mucnuoc <= pool[poolID].minValue)
+    if (pool[poolID].mucnuoc <= pool[poolID].minValue) {
       pool[poolID].stepOfAuto++;
-    else {
+      pool[poolID].sentStatus = 1;
+    } else {
       digitalWrite(pool[poolID].supplyPin, LOW);
       digitalWrite(pool[poolID].drainPin, HIGH);
     }
   } else if (pool[poolID].stepOfAuto == 1) {
-    if (pool[poolID].mucnuoc >= pool[poolID].maxValue)
+    if (pool[poolID].mucnuoc >= pool[poolID].maxValue) {
       pool[poolID].stepOfAuto++;
-    else {
+      pool[poolID].sentStatus = 1;
+    } else {
       digitalWrite(pool[poolID].drainPin, LOW);
       digitalWrite(pool[poolID].supplyPin, HIGH);
     }
   } else if (pool[poolID].stepOfAuto == 2) {
     if (pool[poolID].mucnuoc <= pool[poolID].midValue) {
       pool[poolID].stepOfAuto++;
+      pool[poolID].sentStatus = 1;
     } else {
       digitalWrite(pool[poolID].drainPin, HIGH);
       digitalWrite(pool[poolID].supplyPin, LOW);
@@ -54,6 +57,7 @@ void Execution::autoRun(int poolID) {
   } else if (pool[poolID].stepOfAuto == 3) {
     if (pool[poolID].mucnuoc >= pool[poolID].maxValue) {
       pool[poolID].stepOfAuto++;
+      pool[poolID].sentStatus = 1;
       pool[poolID].isDoneAutoMode = 1;
       pool[poolID].autoStatus = 0;
     } else {

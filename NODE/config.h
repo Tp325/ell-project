@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include "CircularQueue.h"
 
+extern String StationID ;
+
 #define RXPin 16
 #define TXPin 17
 
@@ -27,6 +29,8 @@ extern uint8_t amplifierGain;
 #define DATA_COMMAND_PIN 5  // Chân Data/Instruction trên ESP32
 #define WRITE_PIN 2         // Chân Write trên ESP32
 #define READ_PIN 0          // Chân Read trên ESP32
+
+
 //*********************** quản lý hồ****************
 extern int numberOfPool;
 struct Pool {
@@ -36,6 +40,7 @@ struct Pool {
   int stepOfAuto = 0;
   bool inStatus;
   bool outStatus;
+  bool sentStatus=0;
   bool autoStatus;
   float maxValue;
   float midValue;
