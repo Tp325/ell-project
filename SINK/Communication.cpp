@@ -46,8 +46,7 @@ void Communication::begin() {
   } else {
     Serial.print("failed, code ");
     Serial.println(state);
-    delay(1000);
-    ESP.restart();
+    // ESP.restart();
   }
   radio.setPacketReceivedAction(setReceiveFlag);
   Serial.print(F("[SX1278] Starting to listen ... "));
@@ -57,8 +56,7 @@ void Communication::begin() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    delay(1000);
-    ESP.restart();
+    // ESP.restart();
   }
   WiFi.onEvent(onWiFiEvent);
   WiFi.mode(WIFI_STA);

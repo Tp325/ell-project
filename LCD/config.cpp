@@ -47,6 +47,6 @@ String msgToEEPROM;
 
 
 //**************CircularQueue************
-CircularQueue *buffDataFromSink = createQueue(100);
-CircularQueue *buffDataToSink = createQueue(100);
-CircularQueue *buffDataToEEPROM = createQueue(100);
+CircularQueue *buffDataFromSink = createQueue(50);
+CircularQueue *buffDataToSink = createQueue(50);
+CircularQueue *buffDataToEEPROM = createQueue(50);
