@@ -18,19 +18,19 @@ void Storage::begin() {
 void Storage::saveToEEPROM() {
   while (!isEmpty(buffDataToEEPROM)) {
     IDOfPool = atoi(dequeue(buffDataToEEPROM));
-    if (IDOfPool > 0 && IDOfPool <= numberOfPool) {
+    if (IDOfPool > 0 && IDOfPool <= numberOfPool) {     
       maxValueInEEPROM = readFromEEPROM(pool[IDOfPool].addressOfSavedDataInEEPROM);
       midValueInEEPROM = readFromEEPROM(pool[IDOfPool].addressOfSavedDataInEEPROM + sizeof(float));
       minValueInEEPROM = readFromEEPROM(pool[IDOfPool].addressOfSavedDataInEEPROM + 2 * sizeof(float));
-      if (fabs(maxValueInEEPROM - pool[IDOfPool].maxValue) < 0.1) {
+      if (fabs(maxValueInEEPROM - pool[IDOfPool].maxValue) > 0.1) {
         EEPROM.put(pool[IDOfPool].addressOfSavedDataInEEPROM, pool[IDOfPool].maxValue);
         needCommit = true;
       }
-      if (fabs(midValueInEEPROM - pool[IDOfPool].midValue) < 0.1) {
+      if (fabs(midValueInEEPROM - pool[IDOfPool].midValue) > 0.1) {
         EEPROM.put(pool[IDOfPool].addressOfSavedDataInEEPROM + sizeof(float), pool[IDOfPool].midValue);
         needCommit = true;
       }
-      if (fabs(minValueInEEPROM - pool[IDOfPool].minValue) < 0.1) {
+      if (fabs(minValueInEEPROM - pool[IDOfPool].minValue) > 0.1) {
         EEPROM.put(pool[IDOfPool].addressOfSavedDataInEEPROM + (2 * sizeof(float)), pool[IDOfPool].minValue);
         needCommit = true;
       }

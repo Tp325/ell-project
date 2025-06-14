@@ -24,11 +24,4 @@ public:
   void homePage(Pool &A);     // page 1..n
   void settingPage(Pool A);  //page 0
 };
-class Button {
-private:
-public:
-  Button();
-  void begin();
-  void checkState();
-};
 #endif

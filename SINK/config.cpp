@@ -36,7 +36,7 @@ String topicSend = "ellSend";
 
 
 //**************CircularQueue************
-CircularQueue *buffDataFromDisplay = createQueue(40);
-CircularQueue *buffDataFromNode = createQueue(40);
-CircularQueue *buffDataFromServer = createQueue(40);
-CircularQueue *buffDataToServer = createQueue(40);
+CircularQueue *buffDataFromDisplay = createQueue(70);
+CircularQueue *buffDataFromNode = createQueue(70);
+CircularQueue *buffDataFromServer = createQueue(70);
+CircularQueue *buffDataToServer = createQueue(70);
