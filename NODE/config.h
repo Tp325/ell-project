@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include "CircularQueue.h"
 
-extern String StationID ;
+extern String StationID;
 
 #define RXPin 16
 #define TXPin 17
@@ -34,22 +34,23 @@ extern uint8_t amplifierGain;
 //*********************** quản lý hồ****************
 extern int numberOfPool;
 struct Pool {
-  int poolID;
   byte IDOfSensor;
+  float SensorpieLenght;
+  unsigned long int timeReposeDataSensorToSink = 0;
   float mucnuoc;
-  int stepOfAuto = 0;
-  bool inStatus;
-  bool outStatus;
-  bool sentStatus=0;
-  bool autoStatus;
   float maxValue;
   float midValue;
   float minValue;
+  int poolID;
   int supplyPin;
+  bool inStatus;
   int drainPin;
-  float SensorpieLenght;
-  unsigned long int timeReposeDataSensorToSink = 0;
+  bool outStatus;
+  int isSentValStatus = 0;
+  int stepOfAuto = 0;
+  bool autoStatus;
   bool isDoneAutoMode = 0;
+  bool isSentSensorStatus = 0;
 };
 extern Pool pool[10];
 extern void createNewPool(int poolID, int supplyPin, int drainPin, byte IDOfSensor, float SensorpieLenght);

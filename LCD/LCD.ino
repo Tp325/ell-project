@@ -1,4 +1,5 @@
 #include "Display.h"
+#include "Button.h"
 #include "Communication.h"
 #include "Storage.h"
 #include <freertos/FreeRTOS.h>
@@ -14,10 +15,10 @@ void setup() {
   storage.begin();
   delay(1000);
   xTaskCreatePinnedToCore(vtaskButton, "taskButton", 4096, NULL, 5, NULL, 0);
-  xTaskCreate(vtaskDisplay, "taskDisplay", 8192, NULL, 5, NULL);
+  xTaskCreate(vtaskDisplay, "taskDisplay", 4096, NULL, 5, NULL);
   xTaskCreate(vtaskSensorDetect, "taskSensorDetect", 2048, NULL, 5, NULL);
-  xTaskCreate(vtaskSendToSink, "taskSendToSink", 2048, NULL, 5, NULL);
-  xTaskCreate(vtaskReceiveFromSink, "taskReceiveFromSink", 2048, NULL, 5, NULL);
+  xTaskCreate(vtaskSendToSink, "taskSendToSink", 4096, NULL, 5, NULL);
+  xTaskCreate(vtaskReceiveFromSink, "taskReceiveFromSink", 4096, NULL, 5, NULL);
   xTaskCreate(vTaskAnalize, "TaskAnalize", 2048, NULL, 5, NULL);
   xTaskCreate(vtaskAnalizeDataToSink, "taskAnalizeDataToSink", 2048, NULL, 5, NULL);
   xTaskCreate(vtaskSaveToEEPROM, "taskSaveToEEPROM", 2048, NULL, 5, NULL);

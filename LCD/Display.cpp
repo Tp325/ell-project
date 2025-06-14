@@ -224,24 +224,33 @@ void Display::homePage(Pool &A) {
   vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_TextGoTo(7, 2);
   GLCD_WriteString(" BE ");
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.poolID));
   vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_TextGoTo(0, 5);
   GLCD_WriteString(" MUC NUOC: ");
-  GLCD_WriteString(String(A.mucnuoc));
-  GLCD_WriteString(" cm       ");
+  if (int(A.mucnuoc) == 404)
+    GLCD_WriteString("404 Error");
+  else {
+    GLCD_WriteString(String(A.mucnuoc));
+    vTaskDelay(5 / portTICK_PERIOD_MS);
+    GLCD_WriteString(" cm       ");
+  }
   vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_TextGoTo(0, 8);
   GLCD_WriteString(" VAN VAO: ");
   if (A.inStatus == 2 || A.inStatus == 3) {
+    vTaskDelay(5 / portTICK_PERIOD_MS);
     GLCD_WriteString("---    ");
     vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
     if (A.inStatus == 0) {
+      vTaskDelay(5 / portTICK_PERIOD_MS);
       GLCD_WriteString("OFF       ");
       vTaskDelay(5 / portTICK_PERIOD_MS);
     }
     if (A.inStatus == 1) {
+      vTaskDelay(5 / portTICK_PERIOD_MS);
       GLCD_WriteString("ON       ");
       vTaskDelay(5 / portTICK_PERIOD_MS);
     }
@@ -249,14 +258,17 @@ void Display::homePage(Pool &A) {
   GLCD_TextGoTo(0, 11);
   GLCD_WriteString(" VAN RA: ");
   if (A.outStatus == 2 || A.outStatus == 3) {
+    vTaskDelay(5 / portTICK_PERIOD_MS);
     GLCD_WriteString("---    ");
     vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
     if (A.outStatus == 0) {
+      vTaskDelay(5 / portTICK_PERIOD_MS);
       GLCD_WriteString("OFF       ");
       vTaskDelay(5 / portTICK_PERIOD_MS);
     }
     if (A.outStatus == 1) {
+      vTaskDelay(5 / portTICK_PERIOD_MS);
       GLCD_WriteString("ON       ");
       vTaskDelay(5 / portTICK_PERIOD_MS);
     }
@@ -264,19 +276,23 @@ void Display::homePage(Pool &A) {
   GLCD_TextGoTo(0, 14);
   GLCD_WriteString(" TU DONG: ");
   if (A.autoStatus == 2 || A.autoStatus == 3) {
+    vTaskDelay(5 / portTICK_PERIOD_MS);
     GLCD_WriteString("---    ");
     vTaskDelay(5 / portTICK_PERIOD_MS);
   } else {
     if (A.autoStatus == 4) {
+      vTaskDelay(5 / portTICK_PERIOD_MS);
       GLCD_WriteString("ERROR  ");
-      vTaskDelay(100 / portTICK_PERIOD_MS);
+      vTaskDelay(300 / portTICK_PERIOD_MS);
       A.autoStatus = 0;
     } else {
       if (A.autoStatus == 1) {
+        vTaskDelay(5 / portTICK_PERIOD_MS);
         GLCD_WriteString("PROCESSING       ");
         vTaskDelay(5 / portTICK_PERIOD_MS);
       }
       if (A.autoStatus == 0) {
+        vTaskDelay(5 / portTICK_PERIOD_MS);
         GLCD_WriteString("OFF       ");
         vTaskDelay(5 / portTICK_PERIOD_MS);
       }
@@ -291,25 +307,31 @@ void Display::settingPage(Pool A) {
 
   GLCD_TextGoTo(7, 2);
   GLCD_WriteString(" BE ");
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.poolID));
   vTaskDelay(5 / portTICK_PERIOD_MS);
 
   GLCD_TextGoTo(0, 5);
   GLCD_WriteString(" CAO NHAT: ");
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.maxValue));
   GLCD_WriteString(" cm ");
   vTaskDelay(5 / portTICK_PERIOD_MS);
 
   GLCD_TextGoTo(0, 8);
   GLCD_WriteString(" GIUA: ");
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.midValue));
   GLCD_WriteString(" cm ");
   vTaskDelay(5 / portTICK_PERIOD_MS);
 
   GLCD_TextGoTo(0, 11);
   GLCD_WriteString(" THAP NHAT: ");
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_WriteString(String(A.minValue));
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_WriteString(" cm ");
+  vTaskDelay(5 / portTICK_PERIOD_MS);
   GLCD_TextGoTo(0, 14);
   GLCD_WriteString("               ");
   vTaskDelay(5 / portTICK_PERIOD_MS);
@@ -317,130 +339,12 @@ void Display::settingPage(Pool A) {
   // hàm tạo con trỏ để cuối cùng của code này
   GLCD_TextGoTo(0, pointerPossitionAtSettingPage);
   vTaskDelay(5 / portTICK_PERIOD_MS);
-  if (isChangingValueAtSettingPage == 1)
+  if (isChangingValueAtSettingPage == 1) {
+    vTaskDelay(5 / portTICK_PERIOD_MS);
     GLCD_WriteChar('.');
-  else
+  } else {
+    vTaskDelay(5 / portTICK_PERIOD_MS);
     GLCD_WriteChar('>');
+  }
   vTaskDelay(5 / portTICK_PERIOD_MS);
-}
-
-Button::Button() {}
-void Button::begin() {
-  pinMode(up, INPUT_PULLUP);
-  pinMode(down, INPUT_PULLUP);
-  pinMode(Left, INPUT_PULLUP);
-  pinMode(Right, INPUT_PULLUP);
-  pinMode(select, INPUT_PULLUP);
-  pinMode(supplyval, INPUT_PULLUP);
-  pinMode(drainval, INPUT_PULLUP);
-  pinMode(settingButton, INPUT_PULLUP);
-  pinMode(autoButton, INPUT_PULLUP);
-}
-
-void Button::checkState() {
-  //*************Page setting status***********
-  if (digitalRead(settingButton) == 0) {
-    if (currentPage == 0) {
-      currentPage = lastPage;
-      lastPage = 0;
-    } else {
-      lastPage = currentPage;
-      pointerPossitionAtSettingPage = 5;
-      isChangingValueAtSettingPage = 0;
-      currentPage = 0;
-    }
-    isPageChangeToSettingPage = 1;
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-  }
-  //*******************************
-  if (currentPage != 0) {
-    if (digitalRead(Right) == 0 && currentPage <= numberOfPool) {
-      currentPage++;
-      if (currentPage == numberOfPool + 1)
-        currentPage = 1;
-      vTaskDelay(500 / portTICK_PERIOD_MS);
-    }
-    if (digitalRead(Left) == 0 && currentPage <= numberOfPool) {
-      currentPage--;
-      if (currentPage == 0)
-        currentPage = numberOfPool;
-      vTaskDelay(500 / portTICK_PERIOD_MS);
-    }
-    if (digitalRead(autoButton) == 0) {
-      if (pool[currentPage].maxValue > pool[currentPage].midValue && pool[currentPage].midValue > pool[currentPage].minValue) {
-        if (pool[currentPage].autoStatus < 2)
-          pool[currentPage].autoStatus = pool[currentPage].autoStatus == 0 ? 3 : 2;
-        pool[currentPage].outStatus = 0;
-        pool[currentPage].inStatus = 0;
-        isValStatusButtonPressed = 1;
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-      } else {
-        pool[currentPage].autoStatus = 4;
-      }
-    }
-    if (pool[currentPage].autoStatus == 0) {
-      if (digitalRead(supplyval) == 0) {
-        if (pool[currentPage].inStatus < 2)
-          pool[currentPage].inStatus = pool[currentPage].inStatus == 0 ? 3 : 2;
-        isValStatusButtonPressed = 1;
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-      }
-      if (digitalRead(drainval) == 0) {
-        if (pool[currentPage].outStatus < 2)
-          pool[currentPage].outStatus = pool[currentPage].outStatus == 0 ? 3 : 2;
-        ;
-        isValStatusButtonPressed = 1;
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-      }
-    }
-  }
-  //*************Page setting status********************
-  else if (currentPage == 0) {
-    // number 15 and 5 is the maximum and smallest row of text display in lcd at setting page
-    if (digitalRead(select) == 0) {
-      isChangingValueAtSettingPage = !isChangingValueAtSettingPage;
-      isSettingValChange++;
-      vTaskDelay(250 / portTICK_PERIOD_MS);
-    }
-    if (isChangingValueAtSettingPage == 0) {
-      if (digitalRead(up) == 0 && pointerPossitionAtSettingPage >= 5) {
-        pointerPossitionAtSettingPage -= 3;
-        if (pointerPossitionAtSettingPage < 5)
-          pointerPossitionAtSettingPage = 11;
-        vTaskDelay(250 / portTICK_PERIOD_MS);
-      }
-      if (digitalRead(down) == 0 && pointerPossitionAtSettingPage <= 11) {
-        pointerPossitionAtSettingPage += 3;
-        if (pointerPossitionAtSettingPage > 11)
-          pointerPossitionAtSettingPage = 5;
-        vTaskDelay(250 / portTICK_PERIOD_MS);
-      }
-    } else if (isChangingValueAtSettingPage == 1) {
-      if (digitalRead(up) == 0) {
-        if (pointerPossitionAtSettingPage == 5) {
-          pool[lastPage].maxValue += 0.5;
-        }
-        if (pointerPossitionAtSettingPage == 8) {
-          pool[lastPage].midValue += 0.5;
-        }
-        if (pointerPossitionAtSettingPage == 11) {
-          pool[lastPage].minValue += 0.5;
-        }
-        vTaskDelay(250 / portTICK_PERIOD_MS);
-      }
-      if (digitalRead(down) == 0) {
-        if (pointerPossitionAtSettingPage == 5 && pool[lastPage].maxValue > 0) {
-          pool[lastPage].maxValue -= 0.5;
-        }
-        if (pointerPossitionAtSettingPage == 8 && pool[lastPage].midValue > 0) {
-          pool[lastPage].midValue -= 0.5;
-        }
-        if (pointerPossitionAtSettingPage == 11 && pool[lastPage].minValue > 0) {
-          pool[lastPage].minValue -= 0.5;
-        }
-        vTaskDelay(250 / portTICK_PERIOD_MS);
-      }
-    }
-    //************************************************
-  }
 }

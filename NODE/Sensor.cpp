@@ -34,9 +34,23 @@ int RS485Sensor::getSensorValue(byte IDOfSensor) {
     Serial2.readBytes(receiveData, 7);
     return receiveData[3] << 8 | receiveData[4];
   } else {
-    return 0;
+    return -999;
   }
 }
-int RS485Sensor::getDistance(byte IDOfSensor) {
-  return getSensorValue(IDOfSensor);
+float RS485Sensor::getDistance(byte IDOfSensor, float SensorpieLenght) {
+  buffSensorValue = getSensorValue(IDOfSensor);
+  if (buffSensorValue != -999) {
+    if (SensorpieLenght - buffSensorValue / 10.0 > 0) {
+      if (SensorpieLenght - buffSensorValue / 10.0 < SensorpieLenght + 20)
+        return SensorpieLenght - buffSensorValue / 10.0;
+      else
+        return 404;
+    } else {
+      if (SensorpieLenght - buffSensorValue / 10.0 > -40.0)
+        return 0;
+      else
+        return 404;
+    }
+  } else
+    return 404;
 }

@@ -6,30 +6,55 @@
 Execution execution;
 Communication communication;
 RS485Sensor sensor;
-
 void setup() {
+  StationID = "TESTH6CT";
+  numberOfPool = 3;
   createNewPool(1, VALVE_SUPPLY_1, VALVE_DRAIN_1, 0x11, 60);
   createNewPool(2, VALVE_SUPPLY_2, VALVE_DRAIN_2, 0x22, 60);
   createNewPool(3, VALVE_SUPPLY_3, VALVE_DRAIN_3, 0x33, 60);
-  numberOfPool = 3;
   Serial.begin(9600);
   communication.begin();
   execution.begin();
   sensor.begin();
-  xTaskCreate(vTaskReceive, "TaskReceive", 20000, NULL, 5, NULL);
-  xTaskCreate(vTaskSend, "TaskSend", 20000, NULL, 5, NULL);
-  xTaskCreate(vTaskAnalize, "TaskAnalize", 20000, NULL, 5, NULL);
-  xTaskCreate(vTaskExecution, "TaskExecution", 20000, NULL, 5, NULL);
-  xTaskCreate(vTaskReadSensor, "TaskReadSensor", 20000, NULL, 5, NULL);
+  xTaskCreatePinnedToCore(vTaskReceive, "TaskReceive", 6144, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vTaskSend, "TaskSend", 6144, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vTaskAnalize, "TaskAnalize", 6144, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vTaskExecution, "TaskExecution", 6144, NULL, 5, NULL, 0);
+  xTaskCreatePinnedToCore(vTaskExecutionAutoRun, "TaskExecutionAutoRun", 6144, NULL, 5, NULL, 0);
+  xTaskCreatePinnedToCore(vTaskReadSensor, "TaskReadSensor", 4096, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(vTaskPrintDebug, "TaskPrintDebug", 2048, NULL, 5, NULL, 0);
   vTaskDelete(NULL);
 }
-
 void loop() {
+}
+void vTaskPrintDebug(void *pvParameters) {
+  while (1) {
+    for (int i = 1; i <= numberOfPool; i++) {
+      Serial.printf("ID:%d\n autoStatus:%d\t stepOfAuto:%d\t inStatus:%d\t outStatus:%d\n", i, pool[i].autoStatus, pool[i].stepOfAuto, pool[i].inStatus, pool[i].outStatus);
+      Serial.printf("ID:%d\t muc nuoc:%f\t max:%f\t mid:%f\n min:%f\n", i, pool[i].mucnuoc, pool[i].maxValue, pool[i].midValue, pool[i].minValue);
+      Serial.println("________________________________");
+    }
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
+  }
 }
 void vTaskAnalize(void *pvParameters) {
   while (1) {
+    for (int i = 1; i <= numberOfPool; i++) {
+      if (pool[i].isDoneAutoMode == 1) {
+        communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"a\":" + String(int(pool[i].autoStatus)) + ",\"i\":" + String(int(pool[i].inStatus)) + ",\"o\":" + String(int(pool[i].outStatus)) + "}"));
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].mucnuoc) + "}"));
+        pool[i].isDoneAutoMode = 0;
+      }
+      if (pool[i].isSentValStatus == 1) {
+        communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"i\":" + String(int(pool[i].inStatus)) + "}"));
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"o\":" + String(int(pool[i].outStatus)) + "}"));
+        pool[i].isSentValStatus = 2;
+      }
+    }
     communication.analizeData();
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }
 void vTaskReceive(void *pvParameters) {
@@ -47,55 +72,64 @@ void vTaskSend(void *pvParameters) {
 void vTaskExecution(void *pvParameters) {
   while (1) {
     for (int i = 1; i <= numberOfPool; i++) {
-      if (pool[i].autoStatus == 1) {
-        execution.autoRun(i);
-        if (pool[i].isDoneAutoMode == 1) {
-          pool[i].isDoneAutoMode = 0;
-          communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"a\":" + String(int(pool[i].autoStatus)) + "}"));
-          communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].mucnuoc) + "}"));
-        }
-        if (pool[i].sentStatus == 1) {
-          communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"i\":" + String(int(pool[i].inStatus)) + "}"));
-          communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"o\":" + String(int(pool[i].outStatus)) + "}"));
-          pool[i].sentStatus = 0;
-        }
+      if (pool[i].inStatus == 1) {
+        execution.supplyIn(i);
       } else {
-        if (pool[i].inStatus == 1) {
-          execution.supplyIn(i);
-        } else {
-          execution.xsupplyIn(i);
-        }
-        if (pool[i].outStatus == 1) {
-          execution.drainOut(i);
-        } else {
-          execution.xdrainOut(i);
-        }
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        execution.xsupplyIn(i);
+      }
+      if (pool[i].outStatus == 1) {
+        execution.drainOut(i);
+      } else {
+        execution.xdrainOut(i);
       }
     }
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(200 / portTICK_PERIOD_MS);
+  }
+}
+void vTaskExecutionAutoRun(void *pvParameters) {
+  while (1) {
+    for (int i = 1; i <= numberOfPool; i++) {
+      if (pool[i].autoStatus == 1) {
+        execution.autoRun(i);
+      }
+    }
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
 }
 void vTaskReadSensor(void *pvParameters) {
+  vTaskDelay(10000 / portTICK_PERIOD_MS);
   for (int i = 1; i <= numberOfPool; i++) {
-    pool[i].mucnuoc = pool[i].SensorpieLenght - sensor.getSensorValue(pool[i].IDOfSensor) / 10.0;
+    pool[i].mucnuoc = sensor.getDistance(pool[i].IDOfSensor, pool[i].SensorpieLenght);
     communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].mucnuoc) + "}"));
-    vTaskDelay(200 / portTICK_PERIOD_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
   while (1) {
     for (int i = 1; i <= numberOfPool; i++) {
       if (pool[i].autoStatus == 1) {
-        if (millis() - pool[i].timeReposeDataSensorToSink >= 3000) {
-          pool[i].mucnuoc = pool[i].SensorpieLenght - sensor.getSensorValue(pool[i].IDOfSensor) / 10.0;
+        if (millis() - pool[i].timeReposeDataSensorToSink >= 15000) {
+          pool[i].mucnuoc = sensor.getDistance(pool[i].IDOfSensor, pool[i].SensorpieLenght);
           communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].mucnuoc) + "}"));
           pool[i].timeReposeDataSensorToSink = millis();
         }
       } else if (millis() - pool[i].timeReposeDataSensorToSink >= 60 * 1000) {
-        pool[i].mucnuoc = pool[i].SensorpieLenght - (sensor.getSensorValue(pool[i].IDOfSensor)) / 10.0;
+        pool[i].mucnuoc = sensor.getDistance(pool[i].IDOfSensor, pool[i].SensorpieLenght);
         communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"mucn\":" + String(pool[i].mucnuoc) + "}"));
         pool[i].timeReposeDataSensorToSink = millis();
       }
-      vTaskDelay(200 / portTICK_PERIOD_MS);
+      if (int(pool[i].mucnuoc) == 404) {
+        if (pool[i].isSentSensorStatus == 0) {
+          pool[i].autoStatus = 0;
+          pool[i].stepOfAuto = 0;
+          pool[i].inStatus = 0;
+          pool[i].outStatus = 0;
+          pool[i].isDoneAutoMode = 0;
+          communication.sendToSink(String("{\"is\":0,\"SID\":\"" + String(StationID) + "\",\"ID\":" + String(i) + ",\"a\":0,\"i\":0,\"o\":0}"));
+        }
+        pool[i].isSentSensorStatus = 1;
+      } else {
+        pool[i].isSentSensorStatus = 0;
+      }
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
     vTaskDelay(500 / portTICK_PERIOD_MS);
   }

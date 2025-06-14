@@ -43,5 +43,5 @@ int VALVE_DRAIN_3 = 32;
 
 
 //**************CircularQueue************
-CircularQueue *buffDataFromSink = createQueue(100);
-CircularQueue *buffDataToSink = createQueue(100);
+CircularQueue *buffDataFromSink = createQueue(150);
+CircularQueue *buffDataToSink = createQueue(150);
