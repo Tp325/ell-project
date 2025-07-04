@@ -1,7 +1,9 @@
 #include "config.h"
 int gpioPins[8] = { 19, 21, 3, 26, 1, 27, 22, 23 };
 
-String StationID = "TESTH6CT";
+// String StationID = "TESTH6CT";
+// String StationID = "TramluonNgaNam1";
+String StationID = "TramluonNgaNam2";
 
 
 //*********************** quản lý hồ****************
@@ -32,7 +34,6 @@ int lastPage = 0;
 // ***************button state************
 bool isValStatusButtonPressed = 0;
 uint8_t isSettingValChange = 0;
-bool isPageChangeToSettingPage = 0;
 int pointerPossitionAtSettingPage = 5;
 bool isChangingValueAtSettingPage = 0;
 bool haveDifferentValue = 0;

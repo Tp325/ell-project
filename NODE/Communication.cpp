@@ -5,7 +5,7 @@ int state;
 int trasmitState = -1;
 volatile bool receiveFlag = false;
 void setReceiveFlag() {
-  //// Serial.println("flag");
+  // Serial.println("flag");
   receiveFlag = true;
   if (isSended == 1) {
     receiveFlag = false;
@@ -30,7 +30,7 @@ void Communication::begin() {
   // Serial.print(F("[SX1278] Starting to listen ... "));
   state = radio.startReceive();
   if (state == RADIOLIB_ERR_NONE) {
-    // Serial.println(F("success!"));
+    // Serial.println(F("success!")); 
   } else {
     // Serial.print(F("failed, code "));
     // Serial.println(state);

@@ -20,11 +20,10 @@ void Button::checkState() {
       lastPage = 0;
     } else {
       lastPage = currentPage;
-      pointerPossitionAtSettingPage = 5;
+      pointerPossitionAtSettingPage = 30;
       isChangingValueAtSettingPage = 0;
       currentPage = 0;
     }
-    isPageChangeToSettingPage = 1;
     vTaskDelay(500 / portTICK_PERIOD_MS);
   }
   //*******************************
@@ -77,39 +76,39 @@ void Button::checkState() {
       vTaskDelay(250 / portTICK_PERIOD_MS);
     }
     if (isChangingValueAtSettingPage == 0) {
-      if (digitalRead(up) == 0 && pointerPossitionAtSettingPage >= 5) {
-        pointerPossitionAtSettingPage -= 3;
-        if (pointerPossitionAtSettingPage < 5)
-          pointerPossitionAtSettingPage = 11;
+      if (digitalRead(up) == 0 && pointerPossitionAtSettingPage >= 30) {
+        pointerPossitionAtSettingPage -= 10;
+        if (pointerPossitionAtSettingPage < 30)
+          pointerPossitionAtSettingPage = 50;
         vTaskDelay(250 / portTICK_PERIOD_MS);
       }
-      if (digitalRead(down) == 0 && pointerPossitionAtSettingPage <= 11) {
-        pointerPossitionAtSettingPage += 3;
-        if (pointerPossitionAtSettingPage > 11)
-          pointerPossitionAtSettingPage = 5;
+      if (digitalRead(down) == 0 && pointerPossitionAtSettingPage <= 50) {
+        pointerPossitionAtSettingPage += 10;
+        if (pointerPossitionAtSettingPage > 50)
+          pointerPossitionAtSettingPage = 30;
         vTaskDelay(250 / portTICK_PERIOD_MS);
       }
     } else if (isChangingValueAtSettingPage == 1) {
       if (digitalRead(up) == 0) {
-        if (pointerPossitionAtSettingPage == 5) {
+        if (pointerPossitionAtSettingPage == 30) {
           pool[lastPage].maxValue += 0.5;
         }
-        if (pointerPossitionAtSettingPage == 8) {
+        if (pointerPossitionAtSettingPage == 40) {
           pool[lastPage].midValue += 0.5;
         }
-        if (pointerPossitionAtSettingPage == 11) {
+        if (pointerPossitionAtSettingPage == 50) {
           pool[lastPage].minValue += 0.5;
         }
         vTaskDelay(250 / portTICK_PERIOD_MS);
       }
       if (digitalRead(down) == 0) {
-        if (pointerPossitionAtSettingPage == 5 && pool[lastPage].maxValue > 0) {
+        if (pointerPossitionAtSettingPage == 30 && pool[lastPage].maxValue > 0) {
           pool[lastPage].maxValue -= 0.5;
         }
-        if (pointerPossitionAtSettingPage == 8 && pool[lastPage].midValue > 0) {
+        if (pointerPossitionAtSettingPage == 40 && pool[lastPage].midValue > 0) {
           pool[lastPage].midValue -= 0.5;
         }
-        if (pointerPossitionAtSettingPage == 11 && pool[lastPage].minValue > 0) {
+        if (pointerPossitionAtSettingPage == 50 && pool[lastPage].minValue > 0) {
           pool[lastPage].minValue -= 0.5;
         }
         vTaskDelay(250 / portTICK_PERIOD_MS);

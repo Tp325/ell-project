@@ -1,7 +1,9 @@
 #include "config.h"
 
 
-String StationID = "TESTH6CT";
+// String StationID = "TESTH6CT";
+String StationID = "TramluonNgaNam2";
+
 
 
 
@@ -31,8 +33,10 @@ const char *mqtt_server = "103.221.220.183";
 const int mqtt_port = 1883;
 const char *mqtt_user = "api1@Iotlab";
 const char *mqtt_pass = "Iotlab@2023";
-String topicReceive = "ellReceive";
-String topicSend = "ellSend";
+
+
+String topicReceive = "TramluonNgaNam2Receive";
+String topicSend = "TramluonNgaNam2Sent";
 
 
 //**************CircularQueue************

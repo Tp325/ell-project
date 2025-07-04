@@ -1,27 +1,19 @@
 #ifndef Display_h
 #define Display_h
 #include "Arduino.h"
+#include <U8g2lib.h>
 #include "config.h"
 class Display {
 private:
-  void write_data(uint8_t data);
-  void write_command(uint8_t command);
-  void GLCD_TextGoTo(unsigned char x, unsigned char y);
-  void cleardisplay();
-  void cleartext();
-  void display_bitmap(const uint8_t *display);
-  void initialize_display();
-  void GLCD_SetAddressPointer(unsigned int address);
-  void GLCD_WriteDisplayData(unsigned char x);
-  void GLCD_ClearCG(void);
-  void GLCD_ClearGraphic(void);
-  void GLCD_WriteString(String string);
-  void GLCD_WriteChar(char charCode);
+  U8G2_ST7920_128X64_F_SW_SPI *u8g2;
+  int enableLed;
 public:
-  Display();
+  Display(int clock = 18, int data = 23, int CS = 5, int reset = 27, int enableLed = 12);
   void begin();
+  void sleepDisplay();
+  void onDisplay();
   void screenOn();
-  void homePage(Pool &A);     // page 1..n
+  void homePage(Pool &A);    // page 1..n
   void settingPage(Pool A);  //page 0
 };
 #endif
