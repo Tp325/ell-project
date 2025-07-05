@@ -67,7 +67,7 @@ void Communication::begin() {
   wm.setDarkMode(true);
   isWebAPStart = 1;
   if (wm.autoConnect("EllPoolWiFi")) {
-    Serial.println("WIFI connected");  
+    Serial.println("WIFI connected");
   } else {
     Serial.println("Web AP running");
   }
@@ -111,6 +111,13 @@ void Communication::receiveFromNode() {
       deserializeJson(doc, msgFromNode);
       if (doc.containsKey("SID")) {
         if (doc["SID"].as<String>() == StationID) {
+          if (doc.containsKey("cm")) {
+            if (doc["cm"].as<String>() == "RS") {
+              haveToReset = 1;
+            } else {
+              haveToReset = 0;
+            }
+          }
           if (!isFull(buffDataFromNode)) {
             Serial.print("receive From Node: ");
             Serial.println(msgFromNode);

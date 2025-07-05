@@ -55,6 +55,7 @@ extern String msgToEEPROM;
 //***********command**************
 //GD mean getdata
 extern String command;
+extern bool haveToReset;
 
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromSink;

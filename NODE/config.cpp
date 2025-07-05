@@ -32,7 +32,7 @@ String msgFromSink;
 String msgToSink;
 String buffMsgFromSink;
 bool isSended;
-
+bool haveToReset=0;
 
 
 //***************Execution*******************

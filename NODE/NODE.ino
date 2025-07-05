@@ -27,13 +27,16 @@ void setup() {
   xTaskCreatePinnedToCore(vTaskExecution, "TaskExecution", 6144, NULL, 5, NULL, 0);
   xTaskCreatePinnedToCore(vTaskExecutionAutoRun, "TaskExecutionAutoRun", 6144, NULL, 5, NULL, 0);
   xTaskCreatePinnedToCore(vTaskReadSensor, "TaskReadSensor", 4096, NULL, 5, NULL, 1);
-  xTaskCreatePinnedToCore(vTaskPrintDebug, "TaskPrintDebug", 2048, NULL, 5, NULL, 0);
+  xTaskCreatePinnedToCore(vTaskBlocking, "TaskBlocking", 2048, NULL, 5, NULL, 0);
   vTaskDelete(NULL);
 }
 void loop() {
 }
-void vTaskPrintDebug(void *pvParameters) {
+void vTaskBlocking(void *pvParameters) {
   while (1) {
+    if (isEmpty(buffDataToSink) && haveToReset == 1) {
+      ESP.restart();
+    }
     // for (int i = 1; i <= numberOfPool; i++) {
     //   Serial.printf("ID:%d\n autoStatus:%d\t stepOfAuto:%d\t inStatus:%d\t outStatus:%d\n", i, pool[i].autoStatus, pool[i].stepOfAuto, pool[i].inStatus, pool[i].outStatus);
     //   Serial.printf("ID:%d\n muc nuoc:%f\t max:%f\t mid:%f\t min:%f\n", i, pool[i].mucnuoc, pool[i].maxValue, pool[i].midValue, pool[i].minValue);

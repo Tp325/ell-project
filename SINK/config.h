@@ -48,8 +48,7 @@ extern String msgFromNode;
 extern String msgFromServer;
 extern String msgToServer;
 extern bool isSended;
-
-
+extern bool haveToReset;
 
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromDisplay;

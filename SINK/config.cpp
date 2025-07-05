@@ -26,6 +26,7 @@ String msgFromNode;
 String msgFromServer;
 String msgToServer;
 bool isSended;
+bool haveToReset = 0;
 
 // Thông tin MQTT Broker
 bool isWifiConnect = 0;

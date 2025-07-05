@@ -93,6 +93,9 @@ void vtaskBlocking(void *pvParameters) {
     // reconnect wifi && mqtt reconnnect
     communication.reconnectWifi();
     communication.reconnectMQTT();
+    if (isEmpty(buffDataFromNode) && haveToReset == 1) {
+      ESP.restart();
+    }
     vTaskDelay(3000 / portTICK_PERIOD_MS);
   }
 }

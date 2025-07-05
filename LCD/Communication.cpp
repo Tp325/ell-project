@@ -2,7 +2,7 @@
 DynamicJsonDocument doc(1024);
 DynamicJsonDocument doc1(1024);
 
-Communication::Communication() { 
+Communication::Communication() {
 }
 void Communication::begin() {
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
@@ -62,8 +62,13 @@ void Communication::analizeDataToSink() {
         }
         vTaskDelay(10 / portTICK_PERIOD_MS);
       }
-      command = "";
     }
+    if (command == "RS") {
+      haveToReset = 1;
+    } else {
+      haveToReset = 0;
+    }
+    command = "";
   } else {
     doc.clear();
     doc["is"] = 0;  //is send by server

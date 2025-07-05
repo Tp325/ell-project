@@ -30,7 +30,7 @@ void Communication::begin() {
   // Serial.print(F("[SX1278] Starting to listen ... "));
   state = radio.startReceive();
   if (state == RADIOLIB_ERR_NONE) {
-    // Serial.println(F("success!")); 
+    // Serial.println(F("success!"));
   } else {
     // Serial.print(F("failed, code "));
     // Serial.println(state);
@@ -97,6 +97,11 @@ void Communication::analizeData() {
           }
         } else if (doc["is"].as<int>() == 1) {
           if (doc.containsKey("cm")) {
+            if (doc["cm"].as<String>() == "RS") {
+              haveToReset = 1;
+            } else {
+              haveToReset = 0;
+            }
           }
           if (doc.containsKey("ma")) {
             pool[IDOfPool].maxValue = doc["ma"].as<float>();

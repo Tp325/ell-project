@@ -61,6 +61,7 @@ extern String msgFromSink;
 extern String msgToSink;
 extern String buffMsgFromSink;
 extern bool isSended;
+extern bool haveToReset;
 
 //************* CircularQueue*****************
 extern CircularQueue *buffDataFromSink;

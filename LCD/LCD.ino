@@ -23,9 +23,18 @@ void setup() {
   xTaskCreate(vTaskAnalize, "TaskAnalize", 2048, NULL, 5, NULL);
   xTaskCreate(vtaskAnalizeDataToSink, "taskAnalizeDataToSink", 2048, NULL, 5, NULL);
   xTaskCreate(vtaskSaveToEEPROM, "taskSaveToEEPROM", 2048, NULL, 5, NULL);
+  xTaskCreatePinnedToCore(vtaskBlocking, "taskBlocking", 2048, NULL, 5, NULL, 0);
   vTaskDelete(NULL);
 }
 void loop() {
+}
+void vtaskBlocking(void *pvParameters) {
+  while (1) {
+    if (haveToReset == 1 ) {
+      ESP.restart();
+    }
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
+  }
 }
 void vtaskButton(void *pvParameters) {
   button.begin();

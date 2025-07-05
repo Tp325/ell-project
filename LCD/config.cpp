@@ -43,8 +43,13 @@ uint8_t IDOfPool;
 String msgToSink;
 String msgFromSink;
 String bufferMsgFromSink;
-String command;
 String msgToEEPROM;
+
+//***********command**************
+//GD mean getdata
+// RS mean Reset ESP
+String command;
+bool haveToReset=0;
 
 
 //**************CircularQueue************
