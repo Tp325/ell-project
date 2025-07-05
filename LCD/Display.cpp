@@ -6,9 +6,13 @@ Display::Display(int clock, int data, int CS, int reset, int enableLed) {
 void Display::begin() {
   u8g2->begin();
   pinMode(enableLed, OUTPUT);
-  u8g2->setFont(u8g2_font_6x12_tr);
-  u8g2->drawXBMP(0, 0, 128, 64, logo); 
+  digitalWrite(enableLed, HIGH);
+  u8g2->clearBuffer();
+  u8g2->setFont(u8g2_font_bubble_tr);
+  u8g2->drawStr((128 - u8g2->getStrWidth("IOT LAB")) / 2, 40, "IOT LAB");
   u8g2->sendBuffer();
+  delay(3000);
+  u8g2->setFont(u8g2_font_6x12_tr);
 }
 void Display::sleepDisplay() {
   digitalWrite(enableLed, LOW);
@@ -85,14 +89,14 @@ void Display::settingPage(Pool A) {
   u8g2->drawStr((128 - u8g2->getStrWidth("CAI DAT THONG SO")) / 2, 10, "CAI DAT THONG SO");
   u8g2->drawStr((128 - u8g2->getStrWidth(String(String("BE ") + String(A.poolID)).c_str())) / 2, 20, String(String("BE ") + String(A.poolID)).c_str());
   u8g2->drawStr(10, 30, "CAO :");
-  u8g2->drawStr(40, 30, String(A.mucnuoc).c_str());
-  u8g2->drawStr(110, 30, "cm");
+  u8g2->drawStr(40, 30, String(A.maxValue).c_str());
+  u8g2->drawStr(90, 30, "cm");
   u8g2->drawStr(10, 40, "GIUA :");
   u8g2->drawStr(40, 40, String(A.midValue).c_str());
-  u8g2->drawStr(110, 40, "cm");
+  u8g2->drawStr(90, 40, "cm");
   u8g2->drawStr(10, 50, "THAP :");
   u8g2->drawStr(40, 50, String(A.minValue).c_str());
-  u8g2->drawStr(110, 50, "cm");
+  u8g2->drawStr(90, 50, "cm");
   // // hàm tạo con trỏ để cuối cùng của code này
   if (isChangingValueAtSettingPage == 1) {
     u8g2->drawStr(5, pointerPossitionAtSettingPage, ".");

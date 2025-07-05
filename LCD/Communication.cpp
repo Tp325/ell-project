@@ -2,7 +2,7 @@
 DynamicJsonDocument doc(1024);
 DynamicJsonDocument doc1(1024);
 
-Communication::Communication() {
+Communication::Communication() { 
 }
 void Communication::begin() {
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
