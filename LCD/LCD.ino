@@ -10,6 +10,7 @@ Button button;
 Storage storage;
 void setup() {
   creatNewPool(3);
+  Serial.begin(9600);
   communication.begin();
   screen.begin();
   storage.begin();
@@ -92,10 +93,10 @@ void vtaskSensorDetect(void *parameter) {
   while (1) {
     if (digitalRead(SS_DETECT) == 1) {
       time = 0;
-      digitalWrite(LED_LCD, HIGH);
+      screen.onDisplay();
     } else {
       if (time >= 15)
-        digitalWrite(LED_LCD, LOW);
+        screen.sleepDisplay();
     }
     time++;
     vTaskDelay(1000 / portTICK_PERIOD_MS);
