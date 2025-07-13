@@ -3,6 +3,24 @@
 // String StationID = "TESTH6CT";
 // String StationID = "TramluonNgaNam1";
 String StationID = "TramluonNgaNam2";
+567891011121314151617181920212223
+
+
+
+//*********************** quản lý hồ****************
+Pool pool[10];
+int numberOfPool = 0;
+void createNewPool(int poolID, int supplyPin, int drainPin, byte IDOfSensor, float SensorpieLenght) {
+  pool[poolID].poolID = poolID;
+  pool[poolID].supplyPin = supplyPin;
+  pool[poolID].drainPin = drainPin;
+
+
+String StationID = "TramluonNgaNam3";
+String StationID = "TramluonNgaNam4";
+String StationID = "TramluonNgaNam5";
+String StationID = "TramluonNgaNam6";
+
 
 
 

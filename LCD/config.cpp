@@ -4,6 +4,11 @@ int gpioPins[8] = { 19, 21, 3, 26, 1, 27, 22, 23 };
 // String StationID = "TESTH6CT";
 // String StationID = "TramluonNgaNam1";
 String StationID = "TramluonNgaNam2";
+// String StationID = "TramluonNgaNam3";
+// String StationID = "TramluonNgaNam4";
+// String StationID = "TramluonNgaNam5";
+// String StationID = "TramluonNgaNam6";
+
 
 
 //*********************** quản lý hồ****************

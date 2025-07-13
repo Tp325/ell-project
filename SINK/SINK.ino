@@ -61,10 +61,6 @@ void vtaskSendToDisplay(void *pvParameters) {
   }
 }
 void vtaskReceiveFromServer(void *pvParameters) {
-  vTaskDelay(5000 / portTICK_PERIOD_MS);
-  if (!isFull(buffDataFromDisplay)) {
-    enqueueData(buffDataFromDisplay, String("{\"is\":1,\"cm\":\"GD\"}").c_str());
-  }
   while (1) {
     communication.receiveFromServer();
     vTaskDelay(20 / portTICK_PERIOD_MS);
