@@ -10,7 +10,7 @@ int state;
 int trasmitState;
 volatile bool receiveFlag = false;
 void setReceiveFlag() {
-  //Serial.println("flag");
+ //Serial.println("flag");
   receiveFlag = true;
   if (isSended == 1) {
     receiveFlag = false;
@@ -22,11 +22,11 @@ Communication::Communication() {
 void onWiFiEvent(WiFiEvent_t event) {
   switch (event) {
     case ARDUINO_EVENT_WIFI_STA_GOT_IP:
-      //Serial.println("[WiFiEvent] Connected to WiFi!");
+     //Serial.println("[WiFiEvent] Connected to WiFi!");
       isWifiConnect = 1;
       break;
     case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
-      //Serial.println("[WiFiEvent] WiFi lost, reconnecting");
+     //Serial.println("[WiFiEvent] WiFi lost, reconnecting");
       isWifiConnect = 0;
       break;
     default:
@@ -36,47 +36,49 @@ void onWiFiEvent(WiFiEvent_t event) {
 void Communication::begin() {
   spiLoRa.begin(14, 12, 13, Nss);
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
+  Serial.begin(9600);
   // Cài đặt driver UART2 với buffer RX 1024 byte và TX 1024 byte
   uart_driver_install(UART_NUM_2, 1024, 1024, 0, NULL, 0);
-  //Serial.println("[SX1278] Initializing ... ");
+ //Serial.println("[SX1278] Initializing ... ");
   state = radio.begin(carrierFrequency, bandwidth, spreadingFactor, codingRate, syncWord, outputPower, preambleLength, amplifierGain);
   // state = radio.begin();
   if (state == RADIOLIB_ERR_NONE) {
-    //Serial.println("success!");
+   //Serial.println("success!");
   } else {
-    //Serial.print("failed, code ");
-    //Serial.println(state);
+   //Serial.print("failed, code ");
+   //Serial.println(state);
     // ESP.restart();
   }
   radio.setPacketReceivedAction(setReceiveFlag);
-  //Serial.print(F("[SX1278] Starting to listen ... "));
+ //Serial.print(F("[SX1278] Starting to listen ... "));
   state = radio.startReceive();
   if (state == RADIOLIB_ERR_NONE) {
-    //Serial.println(F("success!"));
+   //Serial.println(F("success!"));
   } else {
-    //Serial.print(F("failed, code "));
-    //Serial.println(state);
+   //Serial.print(F("failed, code "));
+   //Serial.println(state);
     // ESP.restart();
   }
   WiFi.onEvent(onWiFiEvent);
-  WiFi.mode(WIFI_AP_STA);
+  WiFi.mode(WIFI_STA);
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callbackWrapper);
-  wm.setConfigPortalTimeout(10 * 60);  // in seconds
-  // wm.setConfigPortalBlocking(false);
+  // wm.setConfigPortalTimeout(10 * 60);  // in seconds
+  timeOutStartWeb = millis();
+  wm.setConfigPortalBlocking(false);
   wm.setDarkMode(true);
   isWebAPStart = 1;
   if (wm.autoConnect("EllPoolWiFi")) {
-    //Serial.println("WIFI connected");
+   //Serial.println("WIFI connected");
   } else {
-    //Serial.println("Web AP running");
+   //Serial.println("Web AP running");
   }
 }
 void Communication::receiveFromDisplay() {
   if (Serial2.available()) {
     msgFromDisplay = Serial2.readStringUntil('\n');
-    //Serial.print("receive from display: ");
-    //Serial.println(msgFromDisplay);
+   //Serial.print("receive from display: ");
+   //Serial.println(msgFromDisplay);
     if (!isFull(buffDataFromDisplay)) {
       enqueueData(buffDataFromDisplay, msgFromDisplay.c_str());
     }
@@ -89,12 +91,12 @@ void Communication::sendToNode() {
     isSended = 1;
     trasmitState = radio.transmit(msgToNode);
     if (trasmitState == RADIOLIB_ERR_NONE) {
-      //Serial.print("send to node: ");
-      //Serial.println(msgToNode);
-      //Serial.println("transmission finished!");
+     //Serial.print("send to node: ");
+     //Serial.println(msgToNode);
+     //Serial.println("transmission finished!");
     } else {
-      //Serial.print("failed, code ");
-      //Serial.println(state);
+     //Serial.print("failed, code ");
+     //Serial.println(state);
     }
     vTaskDelay(10 / portTICK_PERIOD_MS);
     state = radio.startReceive();
@@ -119,8 +121,8 @@ void Communication::receiveFromNode() {
             }
           }
           if (!isFull(buffDataFromNode)) {
-            //Serial.print("receive From Node: ");
-            //Serial.println(msgFromNode);
+           //Serial.print("receive From Node: ");
+           //Serial.println(msgFromNode);
             enqueueData(buffDataFromNode, msgFromNode.c_str());
           }
           if (!isFull(buffDataToServer)) {
@@ -137,9 +139,9 @@ void Communication::receiveFromNode() {
 void Communication::sendToDisplay() {
   while (!isEmpty(buffDataFromNode)) {
     msgToDisplay = "";
-    //Serial.print("send to display: ");
+   //Serial.print("send to display: ");
     msgToDisplay = dequeue(buffDataFromNode);
-    //Serial.println(msgToDisplay);
+   //Serial.println(msgToDisplay);
     Serial2.println(msgToDisplay);
     vTaskDelay(50 / portTICK_PERIOD_MS);
   }
@@ -147,9 +149,9 @@ void Communication::sendToDisplay() {
 void Communication::sendToServer() {
   while (!isEmpty(buffDataToServer)) {
     msgToServer = "";
-    //Serial.print("send to server: ");
+   //Serial.print("send to server: ");
     msgToServer = dequeue(buffDataToServer);
-    //Serial.println(msgToServer);
+   //Serial.println(msgToServer);
     client.publish(topicSend.c_str(), msgToServer.c_str());
     vTaskDelay(20 / portTICK_PERIOD_MS);
   }
@@ -159,13 +161,17 @@ void Communication::receiveFromServer() {
     if (!isFull(buffDataFromDisplay)) {
       enqueueData(buffDataFromDisplay, msgFromServer.c_str());
     }
-    //Serial.print("receive From Server: ");
-    //Serial.println(msgFromServer);
+   //Serial.print("receive From Server: ");
+   //Serial.println(msgFromServer);
     msgFromServer = "";
   }
 }
 
 void Communication::processWiFi() {
+  if (millis() - timeOutStartWeb >= 1000 * 60 * 5 && isWebAPStart == 1) {
+    wm.stopConfigPortal();
+    isWebAPStart = 0;
+  }
   if (isWebAPStart == 1) {
     wm.process();
   }
@@ -177,7 +183,7 @@ void Communication::reconnectWifi() {
   if (millis() - timeOutReconnectWiFi > 20000 && isWifiConnect == 0) {
     timeOutReconnectWiFi = millis();
     if (isWebAPStart == 0) {
-      //Serial.print("wait");
+     //Serial.print("wait");
       WiFi.disconnect();
       WiFi.reconnect();
     }
@@ -196,13 +202,13 @@ void Communication::reconnectMQTT() {
 void Communication::connectMqttWithTimeOut() {
   if (millis() - timeOutReconnectMQTT > 2000) {
     timeOutReconnectMQTT = millis();
-    //Serial.println("Attempting MQTT connection...");
+   //Serial.println("Attempting MQTT connection...");
     if (client.connect("EllPoolN503", mqtt_user, mqtt_pass)) {
-      //Serial.println("connected");
+     //Serial.println("connected");
       client.subscribe(topicReceive.c_str());
     }
   } else {
-    //Serial.println("reconnect MQTT...");
+   //Serial.println("reconnect MQTT...");
   }
 }
 

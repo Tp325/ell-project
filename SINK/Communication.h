@@ -29,6 +29,7 @@ private:
   static void callbackWrapper(char* topic, byte* payload, unsigned int length) {
     instance->callbackmqtt(topic, payload, length);
   }
+  unsigned long timeOutStartWeb = 0;
   unsigned long timeOutReconnectMQTT = 0;
   unsigned long timeOutReconnectWiFi = 0;
   bool isWebAPStart = 0;
