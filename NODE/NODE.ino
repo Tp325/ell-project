@@ -145,7 +145,7 @@ void vTaskReadSensor(void *pvParameters) {
         pool[i].isSentSensorStatus = 0;
       }
       //***** for testing time respose***********
-      // countTime = millis();
+      // countTime = millis();`
       // isStartCount = 1;
       //****************************************
       vTaskDelay(1000 / portTICK_PERIOD_MS);

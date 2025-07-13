@@ -5,6 +5,7 @@ Communication communication;
 void setup() {
   Serial.begin(9600);
   communication.begin();
+  delay(2000);
   // xTaskCreatePinnedToCore(vTaskPrintDebug, "TaskPrintDebug", 1024, NULL, 5, NULL, 1);
   xTaskCreatePinnedToCore(vtaskSendToNode, "taskSendToNode", 6144, NULL, 5, NULL, 1);
   xTaskCreatePinnedToCore(vtaskReceiveFromNode, "taskReceiveFromNode", 6144, NULL, 5, NULL, 1);
@@ -37,7 +38,6 @@ void vtaskSynchronize(void *pvParameters) {
 }
 void vtaskSendToNode(void *pvParameters) {
   while (1) {
-
     communication.sendToNode();
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
