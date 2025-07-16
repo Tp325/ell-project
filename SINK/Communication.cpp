@@ -203,7 +203,7 @@ void Communication::connectMqttWithTimeOut() {
   if (millis() - timeOutReconnectMQTT > 2000) {
     timeOutReconnectMQTT = millis();
    //Serial.println("Attempting MQTT connection...");
-    if (client.connect("EllPoolN503", mqtt_user, mqtt_pass)) {
+    if (client.connect("EllPoolN504", mqtt_user, mqtt_pass)) {
      //Serial.println("connected");
       client.subscribe(topicReceive.c_str());
     }

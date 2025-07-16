@@ -4,8 +4,8 @@
 // String StationID = "TESTH6CT";
 // String StationID = "TramluonNgaNam1";
 // String StationID = "TramluonNgaNam2";
-String StationID = "TramluonNgaNam3";
-// String StationID = "TramluonNgaNam4";
+// String StationID = "TramluonNgaNam3";
+String StationID = "TramluonNgaNam4";
 // String StationID = "TramluonNgaNam5";
 // String StationID = "TramluonNgaNam6";
 
@@ -48,11 +48,11 @@ const char *mqtt_pass = "Iotlab@2023";
 // String topicReceive = "TramluonNgaNam2Receive";
 // String topicSend = "TramluonNgaNam2Sent";
 
-String topicReceive = "TramluonNgaNam3Receive";
-String topicSend = "TramluonNgaNam3Sent";
+// String topicReceive = "TramluonNgaNam3Receive";
+// String topicSend = "TramluonNgaNam3Sent";
 
-// String topicReceive = "TramluonNgaNam4Receive";
-// String topicSend = "TramluonNgaNam4Sent";
+String topicReceive = "TramluonNgaNam4Receive";
+String topicSend = "TramluonNgaNam4Sent";
 
 // String topicReceive = "TramluonNgaNam5Receive";
 // String topicSend = "TramluonNgaNam5Sent";
